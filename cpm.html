@@ -222,7 +222,7 @@ svg:hover text.texttip {
                 visitcompositeChart = dc.compositeChart("#visitlinechart");
                 spendcompositeChart = dc.compositeChart("#spendlinechart");
                 impcompositeChart = dc.compositeChart('#implinechart');
-                avgvisit = dc.rowChart('#barvisit');
+                avgvisit = dc.barChart('#barvisit');
                 avgrev = dc.barChart('#barrev');
                 avgorder = dc.barChart('#barorder');
                 flippiechart = dc.pieChart("#flippiechart");
@@ -265,31 +265,6 @@ svg:hover text.texttip {
 
                 selectdate.render();
 
-                // .x(d3.scaleTime().domain([new Date(2019, 0, 10), new Date(2020, 11, 31)]))
-                //     .xUnits(d3.timeDay)
-
-//table
-                // allDollars = ndx.groupAll().reduceSum(function (d) { return +d[]; });
-                // table
-                //     .dimension(spendDim)
-                //     .sortBy(function (d) { return +d.Spent; })
-                //     .showSections(false)
-                //     .columns(['Name',
-                //         {
-                //             label: 'Spent',
-                //             format: function (d) {
-                //                 return '$' + d.Spent;
-                //             }
-                //         },
-                //         'Year',
-                //         {
-                //             label: 'Percent of Total',
-                //             format: function (d) {
-                //                 return Math.floor((d.Spent / allDollars.value()) * 100) + '%';
-                //             }
-                //         }]);
-
-
 // pie
     // flipkart
                 flipDimension = ndx.dimension(function (d) { return d[1]; })
@@ -330,42 +305,6 @@ svg:hover text.texttip {
                 });
 
                 flippiechart.render();
-
-// pie
-    // hc
-                // hcDimension = ndx.dimension(function (d) { return d[1]; })
-                // hcGroup = hcDimension.group().reduceSum(function (d) { return d[18]; });
-
-                // hcpiechart
-                //     .width(850)
-                //     .height(540)
-                //     // .controlsUseVisibility(false)
-                //     .slicesCap(3)
-                //     .innerRadius(70)
-                //     .externalLabels(50)
-                //     .externalRadiusPadding(50)
-                //     // .colors(["red","blue","yellow","green"])
-                //     // .range(['red', '#ddd', 'blue'])
-                //     .dimension(hcDimension)
-                //     .group(hcGroup)
-                //     .legend(dc.legend().y(10).itemHeight(13).gap(10))
-                //     .title(function(d) { return d.key + ': ' + formatComma(d.value); });
-                // hcpiechart.on('pretransition', function (chart) {
-                //     chart.selectAll('.dc-legend-item text')
-                //         .text('')
-
-                //         .append('tspan')
-                //         .text(function (d) { return d.name; })
-
-                //         .append('tspan')
-                //         .attr('x', 160)
-                //         .attr('text-anchor', 'end')
-                //         .text(function (d) { return formatComma(d.data) })
-                //         ;
-
-                // });
-
-                // hcpiechart.render();
 
 // linechart
     // revenue
@@ -601,7 +540,15 @@ svg:hover text.texttip {
 
     // IMPS
                 impdateDimension = ndx.dimension(function (d) { return d.date });
-// console.log(impdateDimension)
+
+                mindate = impdateDimension.top(1)
+                maxdate = impdateDimension.bottom(1)
+                console.log(dayFormat(mindate))
+                console.log(maxdate)
+                console.log(impdateDimension)
+
+
+
                 totalForType = function (type) {
                     return function (d) {
                         return d[1] === type ? d[4] : null;
@@ -755,12 +702,17 @@ svg:hover text.texttip {
 
 // barchart
     // visits
-                var avgvisitweekDimension = ndx.dimension(d => {
-        const day = weekFormat(d[3])
-        const name = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        arrayToBeSorted = arrayWithReferenceOrder.filter(v => arrayToBeSorted.includes(v));
+        var avgvisitweekDimension = ndx.dimension(function (d) { return weekFormat(d[3]); })
+//                 var avgvisitweekDimension = ndx.dimension(d => {
+//         items = weekFormat(d[3]);
+//         sorting = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+//         result = items.map(function(item) {
+//     var n = sorting.indexOf(item[1]);
+//     sorting[n] = '';
+//     return [n, item]
+// }).sort().map(function(j) { return j[1] })
+//   }  )
 
-        return arrayToBeSorted;})
                 function reduceAdd(p, v) {
                     ++p.count;
                     p.total += v[10];
@@ -785,15 +737,15 @@ svg:hover text.texttip {
                 avgvisit
                     .width(450)
                     .height(300)
-                    // .x(d3.scaleBand().domain(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]))
+                    .x(d3.scaleBand().domain(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]))
                     // .xUnits(d3.timeWeeks)
                     // .x(d3.scaleBand())
-                    // .xUnits(dc.units.ordinal)
-                    // .brushOn(false)
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
                     // .xAxisLabel('Weeeks')
                     // .colors('#ffd644')
-                    // .yAxisLabel('AVG Visits')
-                    // .elasticY(true)
+                    .yAxisLabel('AVG Visits')
+                    .elasticY(true)
                     // .yAxisPadding(40)
                     .dimension(avgvisitweekDimension)
                     // .barPadding(0.1)
@@ -834,8 +786,7 @@ svg:hover text.texttip {
                     // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    .colors('#66ff44')
-                    // .colors(scaleOrdinal(d3.schemeCategory10))
+                    .colors(d3.scaleOrdinal(d3.schemeCategory10))
                     // .xAxisLabel('Weeeks')
                     .yAxisLabel('AVG Revenue')
                     .elasticY(true)
