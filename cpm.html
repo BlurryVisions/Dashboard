@@ -134,12 +134,12 @@ svg:hover text.texttip {
         <div class="clearfix"></div>
     </div>
 
-    <!-- <div id="ctrcompositeChart">
+    <div id="visclicompositeChart">
         <div class="reset" style="display: none;">Selected: <span class="filter" style="display: none;"></span></div>
         <div class="reset"><a class="reset" style="display: none;"
-                href="javascript:ctrcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
+                href="javascript:visclicompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
         <div class="clearfix"></div>
-    </div> -->
+    </div>
 </div>
 <div class="othercharts">
 
@@ -253,7 +253,7 @@ svg:hover text.texttip {
                 avgorder = dc.barChart('#barorder');
                 flippiechart = dc.pieChart("#flippiechart");
                 cartvcompositeChart = dc.barChart("#cartvcompositeChart");
-                // ctrcompositeChart = dc.barChart("#ctrcompositeChart");
+                visclicompositeChart = dc.barChart("#visclicompositeChart");
 
                 conctrcompositeChart = dc.compositeChart('#conctrcompositeChart');
 
@@ -845,49 +845,49 @@ svg:hover text.texttip {
                 cartvcompositeChart.render();
 
     // CTR
-                // var avgctrweekDimension = ndx.dimension(function (d) { return d.week })
-                // function reduceAdd5(p, v) {
-                //     ++p.count;
-                //     p.imps += v.impressions;
-                //     p.clicks += v.clicks;
-                //     return p;
-                // }
+                var avgviscliweekDimension = ndx.dimension(function (d) { return d.week })
+                function reduceAdd7(p, v) {
+                    ++p.count;
+                    p.visits += v.visits;
+                    p.clicks += v.clicks;
+                    return p;
+                }
 
-                // function reduceRemove5(p, v) {
-                //     --p.count;
-                //     p.imps -= v.impressions;
-                //     p.clicks -= v.clicks;
-                //     return p;
-                // }
+                function reduceRemove7(p, v) {
+                    --p.count;
+                    p.visits -= v.visits;
+                    p.clicks -= v.clicks;
+                    return p;
+                }
 
-                // function reduceInitial5() {
-                //     return { count:0, imps: 0, clicks: 0 };
-                // }
+                function reduceInitial7() {
+                    return { count:0, visits: 0, clicks: 0 };
+                }
 
-                // var avgctrweekGroup = avgctrweekDimension.group().reduce(reduceAdd5, reduceRemove5, reduceInitial5);
+                var avgviscliweekGroup = avgviscliweekDimension.group().reduce(reduceAdd7, reduceRemove7, reduceInitial7);
 
-                // ctrcompositeChart
-                //     .width(450)
-                //     .height(300)
-                //     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                //     // .xUnits(d3.timeWeek)
-                //     // .x(d3.scaleBand())
-                //     .xUnits(dc.units.ordinal)
-                //     .brushOn(false)
-                //     // .xAxisLabel('Weeeks')
-                //     .colors('#ffd644')
-                //     .yAxisLabel('CTR')
-                //     .elasticY(true)
-                //     // .yAxisPadding(40)
-                //     .dimension(avgctrweekDimension)
-                //     // .barPadding(0.1)
-                //     // .outerPadding(0.05)
-                //     .group(avgctrweekGroup)
+                visclicompositeChart
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('Weeeks')
+                    .colors('#ffd644')
+                    .yAxisLabel('CTR')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgviscliweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgviscliweekGroup)
 
-                //     .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 })
-                //     .title(function(p) { return parseFloat(ctrcompositeChart.valueAccessor()(p)).toFixed(2)+"%"});
-                // ctrcompositeChart.margins().left += 30;
-                // ctrcompositeChart.render();
+                    .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.visits / p.value.clicks * 100 : 0 })
+                    .title(function(p) { return parseFloat(visclicompositeChart.valueAccessor()(p)).toFixed(2)+"%"});
+                visclicompositeChart.margins().left += 30;
+                visclicompositeChart.render();
 
 
                     // dateDimension = ndx.dimension(function (d) { return d[3]; })
