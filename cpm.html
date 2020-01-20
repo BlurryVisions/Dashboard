@@ -170,11 +170,11 @@ svg:hover text.texttip {
                     for (var col = 0, n = data.getNumberOfColumns(); col < n; col++) {
                         // DataArray[row][col] = data.getFormattedValue(row, col);
 
-                        if (col > 3) {
-                            DataArray[row][col] = Math.floor(data.getFormattedValue(row, col));
-                        } else {
+                        // if (col > 3) {
+                        //     DataArray[row][col] = Math.floor(data.getFormattedValue(row, col));
+                        // } else {
                             DataArray[row][col] = data.getFormattedValue(row, col);
-                        }
+                        // }
                     }
                 }
                 rendering(DataArray);
@@ -202,26 +202,36 @@ svg:hover text.texttip {
                 var dateFormatParser = d3.timeParse(dateFormatSpecifier);
 
                 data.forEach(function (d) {
-                    d[3] = dateFormatParser(d[3]);
+
+                    d[0] = dateFormatParser(d[0]);
+
+                    // column name
+                    d.impressions = parseInt(d[1]);
+                    d.clicks = parseInt(d[2]);
+                    d.ctr = d[3]
+                    d.cpc = d[4]
+                    d.spends = parseInt(d[5]);
+                    d.cpm = d[6]
+                    d.visits = parseInt(d[7]);
+                    d.revenue = parseInt(d[8]);
+                    d.units = parseInt(d[9]);
+                    d.orders = parseInt(d[10]);
+                    d.crate = d[11]
+                    d.revenuevisit = d[12]
+                    d.costvisit = d[13]
+                    d.visitclick = d[14]
+                    d.hcrevenue = parseInt(d[15])
+                    d.profitloss = d[16]
+                    d.cartValue = parseInt(d[17])
+
                     // pre-calculate better performance
-                    d.month = monthFormat(d3.timeMonth(d[3]));
-                    d.year = yearFormat(d3.timeMonth(d[3])); 
-                    d.date = parseInt(dayFormat(d3.timeDay(d[3])));
-                    d.week = weekFormat(d3.timeDay(d[3]));
+                    d.month = monthFormat(d3.timeMonth(d[0]));
+                    d.year = yearFormat(d3.timeMonth(d[0])); 
+                    d.date = parseInt(dayFormat(d3.timeDay(d[0])));
+                    d.week = weekFormat(d3.timeDay(d[0]));
                     // console.log(weekFormat(d.week))
                 });
 
-                // var parseDate = d3.timeFormat("%m/%d/%Y").parse;
-                // var parseDate2 = d3.timeFormat("%d").parse;
-                // data.forEach(function (d) {
-                //     d.date = parseDate(d[3]);
-                //     d.qtime = parseDate2(d[3].getDate());
-                //     d.Year = d.date.getFullYear();
-                //     console.log(timeFormat(d.date))
-                // });
-
-                // var minDate = transactionDate.bottom(1)[0].TxnDate;
-                // var maxDate = transactionDate.top(1)[0].TxnDate;
 
                 selectYear = dc.selectMenu('#selectyear');
                 selectMonth = dc.selectMenu('#selectmonth');
@@ -279,7 +289,7 @@ svg:hover text.texttip {
 // pie
     // flipkart
                 flipDimension = ndx.dimension(function (d) { return d.month })
-                flipGroup = flipDimension.group().reduceSum(function (d) { return d[11]; });
+                flipGroup = flipDimension.group().reduceSum(function (d) { return d[8]; });
 
                 bottomPayments = flipDimension.top(1); // the bottom four payments, by total
                 // console.log(bottomPayments); // the smallest payment
@@ -334,7 +344,7 @@ svg:hover text.texttip {
 
                 totalForType = function (type) {
                     return function (d) {
-                        return d[1] === type ? d[11] : null;
+                        return d.month === type ? d.revenue : null;
                     };
                 };
 
@@ -416,7 +426,7 @@ svg:hover text.texttip {
 
                 totalForType = function (type) {
                     return function (d) {
-                        return d[1] === type ? d[10] : null;
+                        return d.month === type ? d.visits : null;
                     };
                 };
 
@@ -492,7 +502,7 @@ svg:hover text.texttip {
 
                 totalForType = function (type) {
                     return function (d) {
-                        return d[1] === type ? d[8] : null;
+                        return d.month === type ? d.spends : null;
                     };
                 };
 
@@ -573,7 +583,7 @@ svg:hover text.texttip {
 
                 totalForType = function (type) {
                     return function (d) {
-                        return d[1] === type ? d[4] : null;
+                        return d.month === type ? d.impressions : null;
                     };
                 };
 
@@ -650,96 +660,6 @@ svg:hover text.texttip {
                 impcompositeChart.margins().left += 30;
                 impcompositeChart.render();
 
-    // CONVERSION
-                var avgconweekDimension = ndx.dimension(function (d) { return d.week })
-                function reduceAdd4(p, v) {
-                    ++p.count;
-                    p.orders += v[13];
-                    p.visits += v[10];
-                    return p;
-                }
-
-                function reduceRemove4(p, v) {
-                    --p.count;
-                    p.orders -= v[13];
-                    p.visits -= v[10];
-                    return p;
-                }
-
-                function reduceInitial4() {
-                    return { count:0, visits: 0, orders: 0 };
-                }
-
-                var avgconweekGroup = avgconweekDimension.group().reduce(reduceAdd4, reduceRemove4, reduceInitial4);
-
-                concompositeChart
-                    .width(450)
-                    .height(300)
-                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    // .xAxisLabel('Weeeks')
-                    .colors('#ffd644')
-                    .yAxisLabel('Conversion')
-                    .elasticY(true)
-                    // .yAxisPadding(40)
-                    .dimension(avgconweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
-                    .group(avgconweekGroup)
-
-                    .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 });
-                    // .title(function(p) { return avgconversion.valueAccessor()(p)});
-                concompositeChart.margins().left += 30;
-                concompositeChart.render();
-
-    // CTR
-                var avgctrweekDimension = ndx.dimension(function (d) { return d.week })
-                function reduceAdd5(p, v) {
-                    ++p.count;
-                    p.imps += v[4];
-                    p.clicks += v[5];
-                    return p;
-                }
-
-                function reduceRemove5(p, v) {
-                    --p.count;
-                    p.imps -= v[4];
-                    p.clicks -= v[5];
-                    return p;
-                }
-
-                function reduceInitial5() {
-                    return { count:0, imps: 0, clicks: 0 };
-                }
-
-                var avgctrweekGroup = avgctrweekDimension.group().reduce(reduceAdd5, reduceRemove5, reduceInitial5);
-
-                ctrcompositeChart
-                    .width(450)
-                    .height(300)
-                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    // .xAxisLabel('Weeeks')
-                    .colors('#ffd644')
-                    .yAxisLabel('CTR')
-                    .elasticY(true)
-                    // .yAxisPadding(40)
-                    .dimension(avgctrweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
-                    .group(avgctrweekGroup)
-
-                    .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 });
-                    // .title(function(p) { return avgconversion.valueAccessor()(p)});
-                ctrcompositeChart.margins().left += 30;
-                ctrcompositeChart.render();
-
 
 // barchart
     // visits
@@ -748,13 +668,13 @@ svg:hover text.texttip {
 
                 function reduceAdd(p, v) {
                     ++p.count;
-                    p.total += v[10];
+                    p.total += v.visits;
                     return p;
                 }
 
                 function reduceRemove(p, v) {
                     --p.count;
-                    p.total -= v[10];
+                    p.total -= v.visits;
                     return p;
                 }
 
@@ -791,13 +711,13 @@ svg:hover text.texttip {
                 var avgrevweekDimension = ndx.dimension(function (d) { return d.week })
                 function reduceAdd2(p, v) {
                     ++p.count;
-                    p.total += v[11];
+                    p.total += v.revenue;
                     return p;
                 }
 
                 function reduceRemove2(p, v) {
                     --p.count;
-                    p.total -= v[11];
+                    p.total -= v.revenue;
                     return p;
                 }
 
@@ -834,13 +754,13 @@ svg:hover text.texttip {
                 var avgorderweekDimension = ndx.dimension(function (d) { return d.week })
                 function reduceAdd3(p, v) {
                     ++p.count;
-                    p.total += v[13];
+                    p.total += v.orders;
                     return p;
                 }
 
                 function reduceRemove3(p, v) {
                     --p.count;
-                    p.total -= v[13];
+                    p.total -= v.orders;
                     return p;
                 }
 
@@ -872,71 +792,95 @@ svg:hover text.texttip {
                 avgorder.margins().left += 30;
                 avgorder.render();
 
+    // CONVERSION
+                var avgconweekDimension = ndx.dimension(function (d) { return d.week })
+                function reduceAdd4(p, v) {
+                    ++p.count;
+                    p.orders += v.orders;
+                    p.visits += v.visits;
+                    return p;
+                }
 
+                function reduceRemove4(p, v) {
+                    --p.count;
+                    p.orders -= v.orders;
+                    p.visits -= v.visits;
+                    return p;
+                }
 
-                    // dateDimension = ndx.dimension(function (d) { return d[3]; })
-    // dateGroup = dateDimension.group().reduceSum(function (d) { return d[4]; });
+                function reduceInitial4() {
+                    return { count:0, visits: 0, orders: 0 };
+                }
 
-    // linechart
-    //     .width(1458)
-    //     .height(380)
-    //     .x(d3.scaleTime().domain([new Date(2019, 0, 10), new Date(2020, 11, 31)]))
-    //     .xUnits(d3.timeDay)
-    //     .brushOn(true)
-    //     .yAxisLabel("Impressions")
-    //     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
-    //     .renderHorizontalGridLines(true)
-    //     .elasticX(true)
-    //     .elasticY(true)
-    //     ._rangeBandPadding(1)
-    //     .controlsUseVisibility(true)
-    //     .dimension(dateDimension)
-    //     .group(dateGroup, 'Jan')
-    //     .title(function (d) { return d.key + ': ' + formatComma(d.value); })
+                var avgconweekGroup = avgconweekDimension.group().reduce(reduceAdd4, reduceRemove4, reduceInitial4);
 
+                concompositeChart
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('Weeeks')
+                    .colors('#ffd644')
+                    .yAxisLabel('Conversion')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgconweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgconweekGroup)
+                    // parseFloat(x).toFixed(2)+"%"
+                    .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 })
+                    .title(function(p) { return parseFloat(concompositeChart.valueAccessor()(p)).toFixed(2)+"%"});
+                concompositeChart.margins().left += 30;
+                concompositeChart.render();
 
-    //     //   .x(d3.scaleTime().domain([new Date(2019, 0, 10), new Date(2020, 11, 31)]))
-    //     //   .xUnits(d3.timeDay)
-    //     //   .brushOn(true)
-    //     // //   .xAxisLabel('dates')
-    //     //   .yAxisLabel('', 40)
-    //     //   .dotRadius(7)
-    //     //   .yAxisPadding(20)
-    //     //   .elasticX(true)
-    //     //   .elasticY(true)
-    //     //   .dimension(dateDimension)
-    //     //   .group(dateGroup)
-    //     //   .title(function(d) { return d.key + ': ' + formatComma(d.value); })
-    //     //   .renderDataPoints({radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0})
-    //     //   .renderArea(true);
-    //   linechart.render();
+    // CTR
+                var avgctrweekDimension = ndx.dimension(function (d) { return d.week })
+                function reduceAdd5(p, v) {
+                    ++p.count;
+                    p.imps += v.impressions;
+                    p.clicks += v.clicks;
+                    return p;
+                }
 
-                    // avgconversion = dc.lineChart(conctrcompositeChart)
-                //     // .renderArea(true)
-                //     .colors('red')
-                //     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                //     .dimension(avgconweekDimension)
-                //     .group(avgconweekGroup, 'conversion')
-                //     // .dashStyle([2, 2])
-                //     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 })
+                function reduceRemove5(p, v) {
+                    --p.count;
+                    p.imps -= v.impressions;
+                    p.clicks -= v.clicks;
+                    return p;
+                }
 
-                // conctrcompositeChart
-                //     .width(700)
-                //     .height(380)
-                //     .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
-                //     .xUnits(dc.units.ordinal)
-                //     .brushOn(false)
-                //     .yAxisLabel("Impressions")
-                //     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
-                //     .renderHorizontalGridLines(true)
-                //     .elasticY(true)
-                //     ._rangeBandPadding(1)
-                //     // .title(function(p) { return avgconversion.valueAccessor()(p)})
-                //     .compose([
-                //         avgconversion
-                //     ])
-                // conctrcompositeChart.margins().left += 30;
-                // conctrcompositeChart.render();
+                function reduceInitial5() {
+                    return { count:0, imps: 0, clicks: 0 };
+                }
+
+                var avgctrweekGroup = avgctrweekDimension.group().reduce(reduceAdd5, reduceRemove5, reduceInitial5);
+
+                ctrcompositeChart
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('Weeeks')
+                    .colors('#ffd644')
+                    .yAxisLabel('CTR')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgctrweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgctrweekGroup)
+
+                    .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 })
+                    .title(function(p) { return parseFloat(ctrcompositeChart.valueAccessor()(p)).toFixed(2)+"%"});
+                ctrcompositeChart.margins().left += 30;
+                ctrcompositeChart.render();
 
             }
 
