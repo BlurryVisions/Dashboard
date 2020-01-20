@@ -120,13 +120,21 @@ svg:hover text.texttip {
         <div class="clearfix"></div>
     </div>
 </div>
+<div class="barcharts">
+    <div id="concompositeChart">
+        <div class="reset" style="display: none;">Selected: <span class="filter" style="display: none;"></span></div>
+        <div class="reset"><a class="reset" style="display: none;"
+                href="javascript:concompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
+        <div class="clearfix"></div>
+    </div>
 
-<div id="conctrcompositeChart">
-    <div class="reset" style="display: none;">Selected: <span class="filter" style="display: none;"></span></div>
-    <div class="reset"><a class="reset" style="display: none;" href="javascript:conctrcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
-    <div class="clearfix"></div>
+    <div id="ctrcompositeChart">
+        <div class="reset" style="display: none;">Selected: <span class="filter" style="display: none;"></span></div>
+        <div class="reset"><a class="reset" style="display: none;"
+                href="javascript:ctrcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
+        <div class="clearfix"></div>
+    </div>
 </div>
-
 
     <span id="flippiechart">
         <span class="reset" style="display: none;">Selected: <span class="filter" style="display: none;"></span></span>
@@ -177,18 +185,17 @@ svg:hover text.texttip {
 
 // declaration
                 var formatComma = d3.format(",");
-                // var	parseDate =  d3.timeFormat("%B %d, %Y");
-
-                // var parseDate = d3.time.format.utc("%Y-%m-%dT%H:%M:%S-07:00").parse;
 
                 var dateFormatSpecifier = '%m/%d/%Y';
-                var monthFormatSpecifier = '%b %Y';
-                var dayFormatSpecifier = '%d';
+                var monthFormatSpecifier = '%B';
+                var yearFormatSpecifier = '%Y';
+                var dayFormatSpecifier = '%_d';
                 var weekFormatSpecifier = '%a';
 
 
                 var timeFormat = d3.timeFormat(dateFormatSpecifier);
                 var monthFormat = d3.timeFormat(monthFormatSpecifier);
+                var yearFormat = d3.timeFormat(yearFormatSpecifier);
                 var dayFormat = d3.timeFormat(dayFormatSpecifier);
                 var weekFormat = d3.timeFormat(weekFormatSpecifier);
 
@@ -196,9 +203,11 @@ svg:hover text.texttip {
 
                 data.forEach(function (d) {
                     d[3] = dateFormatParser(d[3]);
-                    d.month = d3.timeMonth(d[3]); // pre-calculate month for better performance
-                    d.date = d3.timeDay(d[3]);
-                    // console.log(d[3])
+                    // pre-calculate better performance
+                    d.month = monthFormat(d3.timeMonth(d[3]));
+                    d.year = yearFormat(d3.timeMonth(d[3])); 
+                    d.date = parseInt(dayFormat(d3.timeDay(d[3])));
+                    d.week = weekFormat(d3.timeDay(d[3]));
                     // console.log(weekFormat(d.week))
                 });
 
@@ -226,16 +235,18 @@ svg:hover text.texttip {
                 avgrev = dc.barChart('#barrev');
                 avgorder = dc.barChart('#barorder');
                 flippiechart = dc.pieChart("#flippiechart");
-                conctrcompositeChart = dc.compositeChart("#conctrcompositeChart");
-                conctrcompositeChart = dc.barChart("#conctrcompositeChart");
+                concompositeChart = dc.barChart("#concompositeChart");
+                ctrcompositeChart = dc.barChart("#ctrcompositeChart");
 
                 // linechart = dc.lineChart('#lineChart');
 
                 var ndx = crossfilter(data)
+                var all = ndx.groupAll();
+
 
 // select
     // year
-                yearDimension = ndx.dimension(function (d) { return d[0]; })
+                yearDimension = ndx.dimension(function (d) { return d.year })
 
                 selectYear
                     .dimension(yearDimension)
@@ -245,7 +256,7 @@ svg:hover text.texttip {
                 selectYear.render();
 
 // month
-                monthDimension = ndx.dimension(function (d) { return monthFormat(d.month) })
+                monthDimension = ndx.dimension(function (d) { return d.month })
 
                 selectMonth
                     .dimension(monthDimension)
@@ -256,7 +267,7 @@ svg:hover text.texttip {
 
 // date
 
-                datessDimension = ndx.dimension(function (d) { return dayFormat(d.date) })
+                datessDimension = ndx.dimension(function (d) { return d.date })
 
                 selectdate
                     .dimension(datessDimension)
@@ -267,7 +278,7 @@ svg:hover text.texttip {
 
 // pie
     // flipkart
-                flipDimension = ndx.dimension(function (d) { return d[1]; })
+                flipDimension = ndx.dimension(function (d) { return d.month })
                 flipGroup = flipDimension.group().reduceSum(function (d) { return d[11]; });
 
                 bottomPayments = flipDimension.top(1); // the bottom four payments, by total
@@ -306,7 +317,7 @@ svg:hover text.texttip {
 
                 flippiechart.render();
 
-// linechart
+// compositeChart
     // revenue
 
         function remove_empty_bins(source_group) {
@@ -319,13 +330,16 @@ svg:hover text.texttip {
             };
         }
 
-                revdateDimension = ndx.dimension(function (d) { return d[3]; });
+                revdateDimension = ndx.dimension(function (d) { return d.date; });
 
                 totalForType = function (type) {
                     return function (d) {
                         return d[1] === type ? d[11] : null;
                     };
                 };
+
+                fildaterevGroup = revdateDimension.group().reduceSum(function (d) { return d.date; });
+                daterevGroup = remove_empty_bins(fildaterevGroup)
 
                 filrevnovGroup = revdateDimension.group().reduceSum(totalForType('November'))
                 revnovGroup = remove_empty_bins(filrevnovGroup)
@@ -335,6 +349,7 @@ svg:hover text.texttip {
 
                 filrevjanGroup = revdateDimension.group().reduceSum(totalForType('January'))
                 revjanGroup = remove_empty_bins(filrevjanGroup);
+                // console.log(revdateDimension.top(1));
 
                 revnovChart = dc.lineChart(revcompositeChart)
                     // .renderArea(true)
@@ -371,15 +386,18 @@ svg:hover text.texttip {
                     })
 
                 revcompositeChart
+                    .group(daterevGroup)
                     .width(700)
                     .height(380)
-                    .x(d3.scaleBand().domain(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"]))
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
+                    // .y(d3.scaleLinear().domain([0, yourmaxvalue]))
                     .brushOn(false)
                     .yAxisLabel("Revenue")
                     .yAxisPadding(10)
                     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
+                    .elasticX(true)
                     .elasticY(true)
                     ._rangeBandPadding(1)
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); })
@@ -394,13 +412,16 @@ svg:hover text.texttip {
 
     // visits
 
-                visitdateDimension = ndx.dimension(function (d) { return d[3]; });
+                visitdateDimension = ndx.dimension(function (d) { return d.date; });
 
                 totalForType = function (type) {
                     return function (d) {
                         return d[1] === type ? d[10] : null;
                     };
                 };
+
+                fildatevisGroup = visitdateDimension.group().reduceSum(function (d) { return d.date; });
+                datevisGroup = remove_empty_bins(fildatevisGroup)
 
                 filvisitnovGroup = visitdateDimension.group().reduceSum(totalForType('November'))
                 visitnovGroup = remove_empty_bins(filvisitnovGroup)
@@ -444,15 +465,17 @@ svg:hover text.texttip {
                         return d.value;
                     })
 
-                visitcompositeChart                
+                visitcompositeChart  
+                    .group(datevisGroup)              
                     .width(700)
                     .height(380)
-                    .x(d3.scaleBand().domain(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"]))
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("Visits", 20)
                     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
+                    .elasticX(true)
                     .elasticY(true)
                     ._rangeBandPadding(1)
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); })
@@ -465,13 +488,16 @@ svg:hover text.texttip {
                 visitcompositeChart.render();
 
     // spends
-                spenddateDimension = ndx.dimension(function (d) { return d[3]; });
+                spenddateDimension = ndx.dimension(function (d) { return d.date; });
 
                 totalForType = function (type) {
                     return function (d) {
                         return d[1] === type ? d[8] : null;
                     };
                 };
+
+                fildatespeGroup = visitdateDimension.group().reduceSum(function (d) { return d.date; });
+                datespeGroup = remove_empty_bins(fildatespeGroup)
 
                 filspendnovGroup = spenddateDimension.group().reduceSum(totalForType('November'))
                 spendnovGroup = remove_empty_bins(filspendnovGroup)
@@ -517,10 +543,11 @@ svg:hover text.texttip {
                     })
 
                 spendcompositeChart
+                    .group(datespeGroup)
                     .width(700)
                     .height(380)
-                    .x(d3.scaleTime().domain(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"]))
-                    .xUnits(d3.timeDays)
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
+                    .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("Spends", 20)
                     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
@@ -541,19 +568,17 @@ svg:hover text.texttip {
     // IMPS
                 impdateDimension = ndx.dimension(function (d) { return d.date });
 
-                mindate = impdateDimension.top(1)
-                maxdate = impdateDimension.bottom(1)
-                console.log(dayFormat(mindate))
-                console.log(maxdate)
-                console.log(impdateDimension)
-
-
+                mindate = parseInt(d3.min(data, function(d){ return d.date }))
+                maxdate = parseInt(d3.max(data, function(d){ return d.date }))
 
                 totalForType = function (type) {
                     return function (d) {
                         return d[1] === type ? d[4] : null;
                     };
                 };
+
+                fildateGroup = impdateDimension.group().reduceSum(function (d) { return d.date; });
+                dateGroup = remove_empty_bins(fildateGroup)
 
                 filimpnovGroup = impdateDimension.group().reduceSum(totalForType('November'))
                 impnovGroup = remove_empty_bins(filimpnovGroup)
@@ -568,9 +593,9 @@ svg:hover text.texttip {
                     // .renderArea(true)
                     .colors('red')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(impdateDimension)
+                    // .dimension(impdateDimension)
                     .group(impnovGroup, 'Nov')
-                    .elasticX(true)
+                    // .elasticX(true)
                     .elasticY(true)
                     // .dashStyle([2, 2])
                     .valueAccessor(function (d) {
@@ -581,9 +606,8 @@ svg:hover text.texttip {
                     // .renderArea(true)
                     .colors('blue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(impdateDimension)
                     .group(impdecGroup, 'Dec')
-                    .elasticX(true)
+                    // .elasticX(true)
                     .elasticY(true)
                     // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
@@ -594,9 +618,9 @@ svg:hover text.texttip {
                     // .renderArea(true)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(impdateDimension)
+                    // .dimension(impdateDimension)
                     .group(impjanGroup, 'Jan')
-                    .elasticX(true)
+                    // .elasticX(true)
                     .elasticY(true)
                     // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
@@ -604,30 +628,30 @@ svg:hover text.texttip {
                     })
 
                 impcompositeChart
+                    .group(dateGroup)
                     .width(700)
                     .height(380)
-                    .x(d3.scaleTime().domain([d3.min(data, function(d){ return dayFormat(d.date) }), d3.max(data, function(d){ return dayFormat(d.date) })]))
-                    // .xUnits(dc.timeDays)
-                    .brushOn(true)
+                    .dimension(impdateDimension)
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
                     .yAxisLabel("Impressions")
                     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
                     .elasticX(true)
                     .elasticY(true)
                     ._rangeBandPadding(1)
-                    // .group(impjanGroup, 'Jan').ticks(5)
-                    // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); })
                     .compose([
-                        impnovChart,
-                        impdecChart,
-                        impjanChart
+                         impnovChart,
+                         impdecChart,
+                         impjanChart
                     ])
                 impcompositeChart.margins().left += 30;
                 impcompositeChart.render();
 
     // CONVERSION
-                var avgconweekDimension = ndx.dimension(function (d) { return d[2]; })
+                var avgconweekDimension = ndx.dimension(function (d) { return d.week })
                 function reduceAdd4(p, v) {
                     ++p.count;
                     p.orders += v[13];
@@ -648,45 +672,17 @@ svg:hover text.texttip {
 
                 var avgconweekGroup = avgconweekDimension.group().reduce(reduceAdd4, reduceRemove4, reduceInitial4);
 
-                // avgconversion = dc.lineChart(conctrcompositeChart)
-                //     // .renderArea(true)
-                //     .colors('red')
-                //     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                //     .dimension(avgconweekDimension)
-                //     .group(avgconweekGroup, 'conversion')
-                //     // .dashStyle([2, 2])
-                //     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 })
-
-                // conctrcompositeChart
-                //     .width(700)
-                //     .height(380)
-                //     .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
-                //     .xUnits(dc.units.ordinal)
-                //     .brushOn(false)
-                //     .yAxisLabel("Impressions")
-                //     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
-                //     .renderHorizontalGridLines(true)
-                //     .elasticY(true)
-                //     ._rangeBandPadding(1)
-                //     // .title(function(p) { return avgconversion.valueAccessor()(p)})
-                //     .compose([
-                //         avgconversion
-                //     ])
-                // conctrcompositeChart.margins().left += 30;
-                // conctrcompositeChart.render();
-
-                // console.log(avgconweekGroup)
-                conctrcompositeChart
+                concompositeChart
                     .width(450)
                     .height(300)
-                    .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
                     // .xUnits(d3.timeWeek)
                     // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     // .xAxisLabel('Weeeks')
                     .colors('#ffd644')
-                    .yAxisLabel('Conversion vs CTR')
+                    .yAxisLabel('Conversion')
                     .elasticY(true)
                     // .yAxisPadding(40)
                     .dimension(avgconweekDimension)
@@ -696,22 +692,59 @@ svg:hover text.texttip {
 
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 });
                     // .title(function(p) { return avgconversion.valueAccessor()(p)});
-                conctrcompositeChart.margins().left += 30;
-                conctrcompositeChart.render();
+                concompositeChart.margins().left += 30;
+                concompositeChart.render();
+
+    // CTR
+                var avgctrweekDimension = ndx.dimension(function (d) { return d.week })
+                function reduceAdd5(p, v) {
+                    ++p.count;
+                    p.imps += v[4];
+                    p.clicks += v[5];
+                    return p;
+                }
+
+                function reduceRemove5(p, v) {
+                    --p.count;
+                    p.imps -= v[4];
+                    p.clicks -= v[5];
+                    return p;
+                }
+
+                function reduceInitial5() {
+                    return { count:0, imps: 0, clicks: 0 };
+                }
+
+                var avgctrweekGroup = avgctrweekDimension.group().reduce(reduceAdd5, reduceRemove5, reduceInitial5);
+
+                ctrcompositeChart
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('Weeeks')
+                    .colors('#ffd644')
+                    .yAxisLabel('CTR')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgctrweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgctrweekGroup)
+
+                    .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 });
+                    // .title(function(p) { return avgconversion.valueAccessor()(p)});
+                ctrcompositeChart.margins().left += 30;
+                ctrcompositeChart.render();
 
 
 // barchart
     // visits
-        var avgvisitweekDimension = ndx.dimension(function (d) { return weekFormat(d[3]); })
-//                 var avgvisitweekDimension = ndx.dimension(d => {
-//         items = weekFormat(d[3]);
-//         sorting = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-//         result = items.map(function(item) {
-//     var n = sorting.indexOf(item[1]);
-//     sorting[n] = '';
-//     return [n, item]
-// }).sort().map(function(j) { return j[1] })
-//   }  )
+        var avgvisitweekDimension = ndx.dimension(function (d) { return d.week })
+        // console.log(avgvisitweekDimension)
 
                 function reduceAdd(p, v) {
                     ++p.count;
@@ -737,30 +770,25 @@ svg:hover text.texttip {
                 avgvisit
                     .width(450)
                     .height(300)
-                    .x(d3.scaleBand().domain(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]))
-                    // .xUnits(d3.timeWeeks)
-                    // .x(d3.scaleBand())
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    // .xAxisLabel('Weeeks')
-                    // .colors('#ffd644')
-                    .yAxisLabel('AVG Visits')
                     .elasticY(true)
-                    // .yAxisPadding(40)
+                    // .elasticX(true)
+                    .brushOn(true)
+                    // .colors('green')
+                    // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .yAxisLabel('AVG Visits')
                     .dimension(avgvisitweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
                     .group(avgvisitweekGroup)
-                    // .xAxis().tickValues(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
-
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    .xUnits(dc.units.ordinal)
                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
                     .title(function(p) { return formatComma(avgvisit.valueAccessor()(p))});
+                    // .xAxis().ticks(7);
                 avgvisit.margins().left += 30;
                 avgvisit.render();
 
     // revenue
 
-                var avgrevweekDimension = ndx.dimension(function (d) { return d[2]; })
+                var avgrevweekDimension = ndx.dimension(function (d) { return d.week })
                 function reduceAdd2(p, v) {
                     ++p.count;
                     p.total += v[11];
@@ -781,7 +809,7 @@ svg:hover text.texttip {
                 avgrev
                     .width(450)
                     .height(300)
-                    .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
                     // .xUnits(d3.timeWeek)
                     // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
@@ -790,6 +818,7 @@ svg:hover text.texttip {
                     // .xAxisLabel('Weeeks')
                     .yAxisLabel('AVG Revenue')
                     .elasticY(true)
+                    // .elasticX(true)
                     // .yAxisPadding(40)
                     .dimension(avgrevweekDimension)
                     // .barPadding(0.1)
@@ -800,7 +829,52 @@ svg:hover text.texttip {
                 avgrev.margins().left += 30;
                 avgrev.render();
 
-    // dateDimension = ndx.dimension(function (d) { return d[3]; })
+    // orders
+
+                var avgorderweekDimension = ndx.dimension(function (d) { return d.week })
+                function reduceAdd3(p, v) {
+                    ++p.count;
+                    p.total += v[13];
+                    return p;
+                }
+
+                function reduceRemove3(p, v) {
+                    --p.count;
+                    p.total -= v[13];
+                    return p;
+                }
+
+                function reduceInitial3() {
+                    return { count: 0, total: 0 };
+                }
+
+                var avgorderweekGroup = avgorderweekDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
+
+                avgorder
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('')
+                    .colors('#44d0ff')
+                    .yAxisLabel('AVG. Orders')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgorderweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgorderweekGroup)                    
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
+                    .title(function(p) { return formatComma(avgorder.valueAccessor()(p))});
+                avgorder.margins().left += 30;
+                avgorder.render();
+
+
+
+                    // dateDimension = ndx.dimension(function (d) { return d[3]; })
     // dateGroup = dateDimension.group().reduceSum(function (d) { return d[4]; });
 
     // linechart
@@ -836,50 +910,33 @@ svg:hover text.texttip {
     //     //   .renderDataPoints({radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0})
     //     //   .renderArea(true);
     //   linechart.render();
-       
 
-    // orders
+                    // avgconversion = dc.lineChart(conctrcompositeChart)
+                //     // .renderArea(true)
+                //     .colors('red')
+                //     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                //     .dimension(avgconweekDimension)
+                //     .group(avgconweekGroup, 'conversion')
+                //     // .dashStyle([2, 2])
+                //     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.orders / p.value.visits * 100 : 0 })
 
-                var avgorderweekDimension = ndx.dimension(function (d) { return d[2]; })
-                function reduceAdd3(p, v) {
-                    ++p.count;
-                    p.total += v[13];
-                    return p;
-                }
-
-                function reduceRemove3(p, v) {
-                    --p.count;
-                    p.total -= v[13];
-                    return p;
-                }
-
-                function reduceInitial3() {
-                    return { count: 0, total: 0 };
-                }
-
-                var avgorderweekGroup = avgorderweekDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
-
-                avgorder
-                    .width(450)
-                    .height(300)
-                    .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    // .xAxisLabel('')
-                    .colors('#44d0ff')
-                    .yAxisLabel('AVG. Orders')
-                    .elasticY(true)
-                    // .yAxisPadding(40)
-                    .dimension(avgorderweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
-                    .group(avgorderweekGroup)                    
-                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
-                    .title(function(p) { return formatComma(avgorder.valueAccessor()(p))});
-                avgorder.margins().left += 30;
-                avgorder.render();
+                // conctrcompositeChart
+                //     .width(700)
+                //     .height(380)
+                //     .x(d3.scaleBand().domain(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]))
+                //     .xUnits(dc.units.ordinal)
+                //     .brushOn(false)
+                //     .yAxisLabel("Impressions")
+                //     .legend(dc.legend().x(500).y(20).itemHeight(15).gap(5))
+                //     .renderHorizontalGridLines(true)
+                //     .elasticY(true)
+                //     ._rangeBandPadding(1)
+                //     // .title(function(p) { return avgconversion.valueAccessor()(p)})
+                //     .compose([
+                //         avgconversion
+                //     ])
+                // conctrcompositeChart.margins().left += 30;
+                // conctrcompositeChart.render();
 
             }
 
