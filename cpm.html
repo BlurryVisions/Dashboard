@@ -532,8 +532,18 @@ v
                     // .range(['red', '#ddd', 'blue'])
                     .dimension(flipDimension)
                     .group(flipGroup)
+                    .legend()
                     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); });
+                    flippiechart.on('pretransition', function(flippiechart) {
+                        flippiechart.append('sbg:text')
+                        .attr("class", "title")
+	   .attr("x", 20)
+	   .attr("y", 20)
+	   .text("Fruit Sold Per Hour");            // .append('tspan')
+            //   .text('revenue')
+            
+      });
 
                 flippiechart.render();
 
