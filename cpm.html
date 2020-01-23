@@ -64,7 +64,7 @@ svg:hover text.texttip {
         display: flex;
         flex-flow: column wrap;
         width: 32%;
-        min-height: 400px;
+        min-height: 410px;
         justify-content: flex-end;
     }
     .title {
@@ -197,6 +197,7 @@ svg:hover text.texttip {
             <div class="reset"><a class="reset" style="display: none;"
                     href="javascript:flippiechart.filterAll();dc.redrawAll();">Reset</a></div>
             <div class="clearfix"></div>
+            <div>Revenue</div>
         </div>
     
         <div id="visclicompositeChart">
@@ -206,7 +207,6 @@ svg:hover text.texttip {
             <div class="clearfix"></div>
         </div>
     </div>
-v
     <div class="linecharts">
         <div id="conctrcpvcompositeChart">
             <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
@@ -526,24 +526,15 @@ v
                     // .controlsUseVisibility(false)
                     .slicesCap(3)
                     .innerRadius(25)
-                    .externalLabels(50)
+                    .externalLabels(45)
                     .externalRadiusPadding(50)
                     // .colors(["red","blue","yellow","green"])
                     // .range(['red', '#ddd', 'blue'])
                     .dimension(flipDimension)
                     .group(flipGroup)
-                    .legend()
                     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); });
-                    flippiechart.on('pretransition', function(flippiechart) {
-                        flippiechart.append('sbg:text')
-                        .attr("class", "title")
-	   .attr("x", 20)
-	   .attr("y", 20)
-	   .text("Fruit Sold Per Hour");            // .append('tspan')
-            //   .text('revenue')
-            
-      });
+                
 
                 flippiechart.render();
 
