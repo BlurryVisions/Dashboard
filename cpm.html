@@ -64,7 +64,7 @@ svg:hover text.texttip {
         display: flex;
         flex-flow: column wrap;
         width: 32%;
-        min-height: 380px;
+        min-height: 400px;
         justify-content: flex-end;
     }
     .title {
@@ -92,7 +92,7 @@ svg:hover text.texttip {
         width: 100px;
         height:40px;
         border: 1px solid skyblue;
-        background-color: white;
+        background-color: #e5e5e5;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -108,6 +108,9 @@ svg:hover text.texttip {
     .header {
         font-size: 20px;
         padding: 10px;;
+    }
+    .table thead th {
+        vertical-align : middle;
     }
     .table th, .table td {
         padding: 8px;
@@ -154,10 +157,10 @@ svg:hover text.texttip {
     </div> -->
     
     <div class="linecharts">
-        <div id="revlinechart"></div>
         <div id="implinechart"></div>
-        <div id="spendlinechart"></div>
+        <div id="revlinechart"></div>
         <div id="visitlinechart"></div>
+        <div id="spendlinechart"></div>
     </div>
     
     <div class="barcharts">
@@ -203,7 +206,7 @@ svg:hover text.texttip {
             <div class="clearfix"></div>
         </div>
     </div>
-
+v
     <div class="linecharts">
         <div id="conctrcpvcompositeChart">
             <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
@@ -406,12 +409,12 @@ svg:hover text.texttip {
                                 return d.ctr;
                             }
                         },
-                        {
-                            label: 'Visits',
-                            format: function (d) {
-                                return formatComma(d.visits);
-                            }
-                        },
+                        // {
+                        //     label: 'Visits',
+                        //     format: function (d) {
+                        //         return formatComma(d.visits);
+                        //     }
+                        // },
                         {
                             label: 'CPC',
                             format: function (d) {
@@ -436,12 +439,12 @@ svg:hover text.texttip {
                                 return formatComma(d.visits);
                             }
                         },
-                        {
-                            label: 'Visits',
-                            format: function (d) {
-                                return formatComma(d.visits);
-                            }
-                        },
+                        // {
+                        //     label: 'Visits',
+                        //     format: function (d) {
+                        //         return formatComma(d.visits);
+                        //     }
+                        // },
                         {
                             label: 'Revenue',
                             format: function (d) {
@@ -609,7 +612,7 @@ svg:hover text.texttip {
                     .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    .yAxisLabel("Revenue")
+                    .yAxisLabel("REVENUE")
                     .yAxisPadding(20000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
@@ -689,7 +692,7 @@ svg:hover text.texttip {
                     .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    .yAxisLabel("Visits", 20)
+                    .yAxisLabel("VISITS", 20)
                     .yAxisPadding(5000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
@@ -769,7 +772,7 @@ svg:hover text.texttip {
                     .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    .yAxisLabel("Spends", 20)
+                    .yAxisLabel("SPENDS", 20)
                     .yAxisPadding(5000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
@@ -908,7 +911,7 @@ svg:hover text.texttip {
                     .brushOn(true)
                     .colors('#ff8944')
                     // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .yAxisLabel('AVG Visits')
+                    .yAxisLabel('AVG. Visits')
                     .dimension(avgvisitweekDimension)
                     .group(avgvisitweekGroup)
                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
@@ -949,7 +952,7 @@ svg:hover text.texttip {
                     .brushOn(false)
                     .colors('#5aff44')
                     // .xAxisLabel('Weeeks')
-                    .yAxisLabel('AVG Revenue')
+                    .yAxisLabel('AVG. Revenue')
                     .elasticY(true)
                     // .elasticX(true)
                     // .yAxisPadding(200)
@@ -1038,7 +1041,7 @@ svg:hover text.texttip {
                     .brushOn(false)
                     // .xAxisLabel('Weeeks')
                     .colors('#44ffe6')
-                    .yAxisLabel('Avg Cart Value')
+                    .yAxisLabel('AVG. Cart Value')
                     // .yAxisPadding(100)
                     .elasticY(true)
                     .dimension(avgcartvweekDimension)
@@ -1084,7 +1087,7 @@ svg:hover text.texttip {
                     .brushOn(false)
                     // .xAxisLabel('Weeeks')
                     .colors('#bd44ff')
-                    .yAxisLabel('Avg Visits / Clicks')
+                    .yAxisLabel('AVG. Visits / Clicks')
                     .elasticY(true)
                     // .yAxisPadding(40)
                     .dimension(avgviscliweekDimension)
