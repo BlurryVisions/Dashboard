@@ -144,10 +144,14 @@ svg:hover text.texttip {
             <div>Select MONTH : </div>
             <div id="selectmonth"></div>
         </div>
-        <!-- <div class="title">
-            <div>Date</div>
-            <div id="selectdate"></div>
-        </div> -->
+        <div class="title">
+            <div>Week</div>
+            <div id="selectweek"></div>
+        </div>
+        <div class="title">
+            <div>Week</div>
+            <div id="selectdim"></div>
+        </div>
     </div>
 
    <!-- <div class="colors">
@@ -162,7 +166,12 @@ svg:hover text.texttip {
         <div id="visitlinechart"></div>
         <div id="spendlinechart"></div>
     </div>
-    
+    <div id="cidrev">
+        <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
+        <div class="reset"><a class="reset" style="display: none;"
+                href="javascript:avgorder.filterAll();dc.redrawAll();">Reset</a></div>
+        <div class="clearfix"></div>
+    </div>
     <div class="barcharts">
         <div id="barvisit">
             <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
@@ -183,14 +192,9 @@ svg:hover text.texttip {
             <div class="clearfix"></div>
         </div>
     </div>
-
+    
     <div class="barcharts">
-        <div id="cartvcompositeChart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:cartvcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
+
     
         <div id="flippiechart">
             <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
@@ -259,77 +263,67 @@ svg:hover text.texttip {
                         // }
                     }
                 }
-                // rendering(DataArray);
-                console.log(DataArray)
+                rendering(DataArray);
+                // console.log(DataArray)
             }
 
-//             function rendering(data) {
+            function rendering(data) {
 
-// // declaration
-//                 var formatComma = d3.format(",");
+// declaration
+                var formatComma = d3.format(",");
 
-//                 var dateFormatSpecifier = '%m/%d/%Y';
-//                 var daymonthFormatSpecifier = '%d %b';
-//                 var monthFormatSpecifier = '%B';
-//                 var monthyearFormatSpecifier = '%B, %Y';
-//                 var yearFormatSpecifier = '%Y';
-//                 var dayFormatSpecifier = '%_d';
-//                 var weekFormatSpecifier = '%a';
+                var dateFormatSpecifier = '%m/%d/%Y';
+                var daymonthFormatSpecifier = '%d %b';
+                var monthFormatSpecifier = '%B';
+                var monthyearFormatSpecifier = '%B, %Y';
+                var yearFormatSpecifier = '%Y';
+                var dayFormatSpecifier = '%_d';
+                var weekFormatSpecifier = '%a';
 
-//                 var timeFormat = d3.timeFormat(dateFormatSpecifier);
-//                 var monthFormat = d3.timeFormat(monthFormatSpecifier);
-//                 var yearFormat = d3.timeFormat(yearFormatSpecifier);
-//                 var dayFormat = d3.timeFormat(dayFormatSpecifier);
-//                 var daymonthFormat = d3.timeFormat(daymonthFormatSpecifier);
-//                 var monthyearFormat = d3.timeFormat(monthyearFormatSpecifier);
-//                 var weekFormat = d3.timeFormat(weekFormatSpecifier);
+                var timeFormat = d3.timeFormat(dateFormatSpecifier);
+                var monthFormat = d3.timeFormat(monthFormatSpecifier);
+                var yearFormat = d3.timeFormat(yearFormatSpecifier);
+                var dayFormat = d3.timeFormat(dayFormatSpecifier);
+                var daymonthFormat = d3.timeFormat(daymonthFormatSpecifier);
+                var monthyearFormat = d3.timeFormat(monthyearFormatSpecifier);
+                var weekFormat = d3.timeFormat(weekFormatSpecifier);
 
-//                 var dateFormatParser = d3.timeParse(dateFormatSpecifier);
+                var dateFormatParser = d3.timeParse(dateFormatSpecifier);
 
-//                 data.forEach(function (d) {
+                data.forEach(function (d) {
 
-//                     d.fulldate = dateFormatParser(d[0]);
-//                     // console.log(d[0]);
-//                     // column name
-//                     d.impressions = parseInt(d[1]);
-//                     d.clicks = parseInt(d[2]);
-//                     d.ctr = d[3]
-//                     d.cpc = d[4]
-//                     d.spends = parseInt(d[5]);
-//                     d.cpm = d[6]
-//                     d.visits = parseInt(d[7]);
-//                     d.revenue = parseInt(d[8]);
-//                     d.units = parseInt(d[9]);
-//                     d.orders = parseInt(d[10]);
-//                     d.crate = d[11]
-//                     d.revenuevisit = d[12]
-//                     d.costvisit = d[13]
-//                     d.visitclick = d[14]
-//                     d.hcrevenue = parseInt(d[15])
-//                     d.profitloss = parseInt(d[16])
-//                     d.cartValue = parseInt(d[17])
+                    d.fulldate = dateFormatParser(d[0]);
+                    // console.log(d.fulldate);
+                    // column name
+                    d.dimension = d[1];
+                    d.cid = parseInt(d[2]);
+                    d.revenue = parseInt(d[3]);
+                    d.visits = parseInt(d[4]);
+                    d.orders = parseInt(d[5]);
 
-//                     // pre-calculate better performance
-//                     // d.fulldate = timeFormat(d.fulldate)
-//                     d.month = monthFormat(d3.timeMonth(d.fulldate));
-//                     d.year = yearFormat(d3.timeMonth(d.fulldate)); 
-//                     d.date = parseInt(dayFormat(d3.timeDay(d.fulldate)));
-//                     d.week = weekFormat(d3.timeDay(d.fulldate));
-//                     // console.log((d.fulldate))
-//                 });
+                    // pre-calculate better performance
+                    // d.fulldate = timeFormat(d.fulldate)
+                    d.month = monthFormat(d3.timeMonth(d.fulldate));
+                    d.year = yearFormat(d3.timeMonth(d.fulldate)); 
+                    d.date = parseInt(dayFormat(d3.timeDay(d.fulldate)));
+                    d.week = weekFormat(d3.timeDay(d.fulldate));
+                    // console.log((d.week))
+                });
 
-//                 selectYear = dc.selectMenu('#selectyear');
-//                 selectMonth = dc.selectMenu('#selectmonth');
-//                 // selectdate = dc.selectMenu('#selectdate');
+                selectYear = dc.selectMenu('#selectyear');
+                selectMonth = dc.selectMenu('#selectmonth');
+                selectWeek = dc.selectMenu('#selectweek');
+                selectDim = dc.selectMenu('#selectdim');
 
 //                 revcompositeChart = dc.compositeChart("#revlinechart");
 //                 visitcompositeChart = dc.compositeChart("#visitlinechart");
 //                 spendcompositeChart = dc.compositeChart("#spendlinechart");
 //                 impcompositeChart = dc.compositeChart('#implinechart');
-//                 avgvisit = dc.barChart('#barvisit');
-//                 avgrev = dc.barChart('#barrev');
-//                 avgorder = dc.barChart('#barorder');
-//                 flippiechart = dc.pieChart("#flippiechart");
+                avgvisit = dc.barChart('#barvisit');
+                avgrev = dc.barChart('#barrev');
+                avgorder = dc.barChart('#barorder');
+                flippiechart = dc.pieChart("#flippiechart");
+                cidrev = dc.rowChart("#cidrev");
 //                 cartvcompositeChart = dc.barChart("#cartvcompositeChart");
 //                 visclicompositeChart = dc.barChart("#visclicompositeChart");
 
@@ -339,32 +333,52 @@ svg:hover text.texttip {
 
 //                 pllinechart = dc.lineChart('#pllinechart');
 
-//                 var ndx = crossfilter(data)
-//                 var all = ndx.groupAll();
+                var ndx = crossfilter(data)
+                var all = ndx.groupAll();
 
 //                 // mindate = d3.min(data, function(d){ return d.fulldate })
 //                 // maxdate = d3.max(data, function(d){ return d.fulldate })
 
-// // select
-//     // year
-//                 yearDimension = ndx.dimension(function (d) { return d.year })
+// select
+    // year
+                yearDimension = ndx.dimension(function (d) { return d.year })
 
-//                 selectYear
-//                     .dimension(yearDimension)
-//                     .group(yearDimension.group())
-//                     .controlsUseVisibility(true);
+                selectYear
+                    .dimension(yearDimension)
+                    .group(yearDimension.group())
+                    .controlsUseVisibility(true);
 
-//                 selectYear.render();
+                selectYear.render();
 
-// // month
-//                 monthDimension = ndx.dimension(function (d) { return d.month })
+// month
+                monthDimension = ndx.dimension(function (d) { return d.month })
 
-//                 selectMonth
-//                     .dimension(monthDimension)
-//                     .group(monthDimension.group())
-//                     .controlsUseVisibility(true);
+                selectMonth
+                    .dimension(monthDimension)
+                    .group(monthDimension.group())
+                    .controlsUseVisibility(true);
 
-//                 selectMonth.render();
+                selectMonth.render();
+
+// month
+                weekDimension = ndx.dimension(function (d) { return d.week })
+
+                selectWeek
+                    .dimension(weekDimension)
+                    .group(weekDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectWeek.render();
+
+// month
+                dimDimension = ndx.dimension(function (d) { return d.dimension })
+
+                selectDim
+                    .dimension(dimDimension)
+                    .group(dimDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectDim.render();
 
 // // date
 
@@ -511,45 +525,45 @@ svg:hover text.texttip {
                                 
 //                 table.render();
 
-// // pie
-//     // flipkart
-//                 flipDimension = ndx.dimension(function (d) { return d.month })
-//                 flipGroup = flipDimension.group().reduceSum(function (d) { return d[8]; });
+// pie
+    // flipkart
+                flipDimension = ndx.dimension(function (d) { return d.dimension })
+                flipGroup = flipDimension.group().reduceSum(function (d) { return d.revenue; });
 
-//                 bottomPayments = flipDimension.top(1); // the bottom four payments, by total
-//                 // console.log(bottomPayments); // the smallest payment
-//                 // console.log(flipGroup); // the smallest payment
+                // bottomPayments = flipDimension.top(1); // the bottom four payments, by total
+                // console.log(bottomPayments); // the smallest payment
+                // console.log(flipGroup); // the smallest payment
 
-//                 flippiechart
-//                     .width(450)
-//                     .height(300)
-//                     // .controlsUseVisibility(false)
-//                     .slicesCap(3)
-//                     .innerRadius(25)
-//                     .externalLabels(45)
-//                     .externalRadiusPadding(50)
-//                     // .colors(["red","blue","yellow","green"])
-//                     // .range(['red', '#ddd', 'blue'])
-//                     .dimension(flipDimension)
-//                     .group(flipGroup)
-//                     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
-//                     .title(function(d) { return d.key + ': ' + formatComma(d.value); });
+                flippiechart
+                    .width(450)
+                    .height(300)
+                    // .controlsUseVisibility(false)
+                    .cap(3)
+                    .innerRadius(25)
+                    .externalLabels(45)
+                    .externalRadiusPadding(50)
+                    // .colors(["red","blue","yellow","green"])
+                    // .range(['red', '#ddd', 'blue'])
+                    .dimension(flipDimension)
+                    .group(flipGroup)
+                    // .legend(dc.legend().y(10).itemHeight(13).gap(10))
+                    .title(function(d) { return d.key + ': ' + formatComma(d.value); });
                 
 
-//                 flippiechart.render();
+                flippiechart.render();
 
 // // compositeChart
 //     // revenue
 
-//         function remove_empty_bins(source_group) {
-//             return {
-//                 all: function () {
-//                     return source_group.all().filter(function (d) {
-//                         return d.value !== 0;
-//                     });
-//                 }
-//             };
-//         }
+        function remove_empty_bins(source_group) {
+            return {
+                all: function () {
+                    return source_group.all().filter(function (d) {
+                        return d.value !== 0;
+                    });
+                }
+            };
+        }
 
 //                 revdateDimension = ndx.dimension(function (d) { return d.date; });
 
@@ -878,137 +892,172 @@ svg:hover text.texttip {
 //                 impcompositeChart.render();
 
 
-// // barchart
-//     // visits
-//         var avgvisitweekDimension = ndx.dimension(function (d) { return d.week })
-//         // console.log(avgvisitweekDimension)
+// barchart
+    // visits
+        var avgvisitweekDimension = ndx.dimension(function (d) { return d.dimension })
+        // console.log(avgvisitweekDimension)
 
-//                 function reduceAdd(p, v) {
-//                     ++p.count;
-//                     p.total += v.visits;
-//                     return p;
-//                 }
+                function reduceAdd(p, v) {
+                    ++p.count;
+                    p.total += v.visits;
+                    return p;
+                }
 
-//                 function reduceRemove(p, v) {
-//                     --p.count;
-//                     p.total -= v.visits;
-//                     return p;
-//                 }
+                function reduceRemove(p, v) {
+                    --p.count;
+                    p.total -= v.visits;
+                    return p;
+                }
 
-//                 function reduceInitial() {
-//                     return { count: 0, total: 0 }; 
-//                 }
+                function reduceInitial() {
+                    return { count: 0, total: 0 }; 
+                }
 
-//                 var avgvisitweekGroup = avgvisitweekDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-//                 // console.log(avgvisitweekGroup);
-//                 // console.log(avgconweekGroup);
+                var avgvisitweekGroup = avgvisitweekDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
+                // console.log(avgvisitweekGroup);
+                // console.log(avgconweekGroup);
 
 
-//                 avgvisit
-//                     .width(450)
-//                     .height(300)
-//                     .elasticY(true)
-//                     // .elasticX(true)
-//                     .brushOn(true)
-//                     .colors('#ff8944')
-//                     // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-//                     .yAxisLabel('AVG. Visits')
-//                     .dimension(avgvisitweekDimension)
-//                     .group(avgvisitweekGroup)
-//                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-//                     .xUnits(dc.units.ordinal)
-//                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
-//                     .title(function(p) { return formatComma(avgvisit.valueAccessor()(p))});
-//                     // .xAxis().ticks(7);
-//                 avgvisit.margins().left += 30;
-//                 avgvisit.render();
+                avgvisit
+                    .width(450)
+                    .height(300)
+                    .elasticY(true)
+                    // .elasticX(true)
+                    .brushOn(true)
+                    .colors('#ff8944')
+                    // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .yAxisLabel('AVG. Visits')
+                    .dimension(avgvisitweekDimension)
+                    .group(avgvisitweekGroup)
+                    .x(d3.scaleBand())
 
-//     // revenue
+                    // .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    .xUnits(dc.units.ordinal)
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
+                    .title(function(p) { return formatComma(avgvisit.valueAccessor()(p))});
+                    // .xAxis().ticks(7);
+                avgvisit.margins().left += 30;
+                avgvisit.render();
 
-//                 var avgrevweekDimension = ndx.dimension(function (d) { return d.week })
-//                 function reduceAdd2(p, v) {
-//                     ++p.count;
-//                     p.total += v.revenue;
-//                     return p;
-//                 }
+    // revenue
 
-//                 function reduceRemove2(p, v) {
-//                     --p.count;
-//                     p.total -= v.revenue;
-//                     return p;
-//                 }
+                var avgrevweekDimension = ndx.dimension(function (d) { return d.dimension })
+                function reduceAdd2(p, v) {
+                    ++p.count;
+                    p.total += v.revenue;
+                    return p;
+                }
 
-//                 function reduceInitial2() {
-//                     return { count: 0, total: 0 };
-//                 }
+                function reduceRemove2(p, v) {
+                    --p.count;
+                    p.total -= v.revenue;
+                    return p;
+                }
 
-//                 var avgrevweekGroup = avgrevweekDimension.group().reduce(reduceAdd2, reduceRemove2, reduceInitial2);
-//                 avgrev
-//                     .width(450)
-//                     .height(300)
-//                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-//                     // .xUnits(d3.timeWeek)
-//                     // .x(d3.scaleBand())
-//                     .xUnits(dc.units.ordinal)
-//                     .brushOn(false)
-//                     .colors('#5aff44')
-//                     // .xAxisLabel('Weeeks')
-//                     .yAxisLabel('AVG. Revenue')
-//                     .elasticY(true)
-//                     // .elasticX(true)
-//                     // .yAxisPadding(200)
-//                     .dimension(avgrevweekDimension)
-//                     // .barPadding(0.1)
-//                     // .outerPadding(0.05)
-//                     .group(avgrevweekGroup)
-//                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
-//                     .title(function(p) { return formatComma(avgrev.valueAccessor()(p))});
-//                     // .yAxis().ticks(5);
-//                 avgrev.margins().left += 30;
-//                 avgrev.render();
+                function reduceInitial2() {
+                    return { count: 0, total: 0 };
+                }
 
-//     // orders
+                var avgrevweekGroup = avgrevweekDimension.group().reduce(reduceAdd2, reduceRemove2, reduceInitial2);
+                avgrev
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand())
 
-//                 var avgorderweekDimension = ndx.dimension(function (d) { return d.week })
-//                 function reduceAdd3(p, v) {
-//                     ++p.count;
-//                     p.total += v.orders;
-//                     return p;
-//                 }
+                    // .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    .colors('#5aff44')
+                    // .xAxisLabel('Weeeks')
+                    .yAxisLabel('AVG. Revenue')
+                    .elasticY(true)
+                    // .elasticX(true)
+                    // .yAxisPadding(200)
+                    .dimension(avgrevweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgrevweekGroup)
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
+                    .title(function(p) { return formatComma(avgrev.valueAccessor()(p))});
+                    // .yAxis().ticks(5);
+                avgrev.margins().left += 30;
+                avgrev.render();
 
-//                 function reduceRemove3(p, v) {
-//                     --p.count;
-//                     p.total -= v.orders;
-//                     return p;
-//                 }
+    // orders
 
-//                 function reduceInitial3() {
-//                     return { count: 0, total: 0 };
-//                 }
+                var avgorderweekDimension = ndx.dimension(function (d) { return d.dimension })
+                function reduceAdd3(p, v) {
+                    ++p.count;
+                    p.total += v.orders;
+                    return p;
+                }
 
-//                 var avgorderweekGroup = avgorderweekDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
+                function reduceRemove3(p, v) {
+                    --p.count;
+                    p.total -= v.orders;
+                    return p;
+                }
 
-//                 avgorder
-//                     .width(450)
-//                     .height(300)
-//                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-//                     // .xUnits(d3.timeWeek)
-//                     // .x(d3.scaleBand())
-//                     .xUnits(dc.units.ordinal)
-//                     .brushOn(false)
-//                     // .xAxisLabel('')
-//                     .colors('#44d0ff')
-//                     .yAxisLabel('AVG. Orders')
-//                     .elasticY(true)
-//                     // .yAxisPadding(40)
-//                     .dimension(avgorderweekDimension)
-//                     // .barPadding(0.1)
-//                     // .outerPadding(0.05)
-//                     .group(avgorderweekGroup)                    
-//                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
-//                     .title(function(p) { return formatComma(avgorder.valueAccessor()(p))});
-//                 avgorder.margins().left += 30;
-//                 avgorder.render();
+                function reduceInitial3() {
+                    return { count: 0, total: 0 };
+                }
+
+                var avgorderweekGroup = avgorderweekDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
+
+                avgorder
+                    .width(450)
+                    .height(300)
+                    .x(d3.scaleBand())
+                    // .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    // .xAxisLabel('')
+                    .colors('#44d0ff')
+                    .yAxisLabel('AVG. Orders')
+                    .elasticY(true)
+                    // .yAxisPadding(40)
+                    .dimension(avgorderweekDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(avgorderweekGroup)                    
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
+                    .title(function(p) { return formatComma(avgorder.valueAccessor()(p))});
+                avgorder.margins().left += 30;
+                avgorder.render();
+
+    // CID
+
+                var cidrevDimension = ndx.dimension(function (d) { return d.cid })
+                var cidrevGroup = cidrevDimension.group().reduceSum(function (d) { return d.revenue });
+
+                cidrev
+                    .width(1360)
+                    .height(400)
+                    // .x(d3.scaleBand())
+                    // .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
+                    // .xUnits(d3.timeWeek)
+                    // .x(d3.scaleBand())
+                    // .xUnits(dc.units.ordinal)
+                    // .brushOn(false)
+                    // .xAxisLabel('')
+                    // .colors('#44d0ff')
+                    // .yAxisLabel('AVG. Orders')
+                    .elasticX(true)
+                    
+                                        // .yAxisPadding(40)
+                    .dimension(cidrevDimension)
+                    // .barPadding(0.1)
+                    // .outerPadding(0.05)
+                    .group(cidrevGroup)
+                    .cap(10)
+                    // .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
+                    // .title(function (p) { return formatComma(avgorder.valueAccessor()(p)) });
+                cidrev.margins().left += 30;
+                cidrev.render();
 
 //     // Cart Value
 //                 var avgcartvweekDimension = ndx.dimension(function (d) { return d.week })
@@ -1385,7 +1434,7 @@ svg:hover text.texttip {
 //                     .yAxis().ticks(4);
 //                 pllinechart.render();
 
-//             }
+            }
 
         }
         )();
