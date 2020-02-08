@@ -146,10 +146,10 @@ svg:hover text.texttip {
         </div>
         <div class="title">
             <div>Week</div>
-            <div id="selectweek"></div>
+            <div id="selectdate"></div>
         </div>
         <div class="title">
-            <div>Week</div>
+            <div>Dimension</div>
             <div id="selectdim"></div>
         </div>
     </div>
@@ -312,7 +312,7 @@ svg:hover text.texttip {
 
                 selectYear = dc.selectMenu('#selectyear');
                 selectMonth = dc.selectMenu('#selectmonth');
-                selectWeek = dc.selectMenu('#selectweek');
+                selectdate = dc.selectMenu('#selectdate');
                 selectDim = dc.selectMenu('#selectdim');
 
 //                 revcompositeChart = dc.compositeChart("#revlinechart");
@@ -382,14 +382,14 @@ svg:hover text.texttip {
 
 // // date
 
-//                 // datessDimension = ndx.dimension(function (d) { return daymonthFormat(d.fulldate) })
+                datessDimension = ndx.dimension(function (d) { return daymonthFormat(d.fulldate) })
 
-//                 // selectdate
-//                 //     .dimension(datessDimension)
-//                 //     .group(datessDimension.group())
-//                 //     .controlsUseVisibility(true);
+                selectdate
+                    .dimension(datessDimension)
+                    .group(datessDimension.group())
+                    .controlsUseVisibility(true);
 
-//                 // selectdate.render();
+                selectdate.render();
 
 //                 datessssDimension = ndx.dimension(function (d) { return d.fulldate })
 

@@ -83,10 +83,9 @@ svg:hover text.texttip {
         background-color:transparent;
         position: fixed;
         padding: 1px;
-        /* text-align: center; Set the navbar to fixed position */
         top: 0;
-        right: 0; /* Position the navbar at the top of the page */
-        width: 100px; /* Full width */
+        right: 0; 
+        width: 100px; 
     }
     .link {
         width: 100px;
@@ -134,7 +133,6 @@ svg:hover text.texttip {
         </div>
     </div>
     
-    <!-- <div id="chart_div"></div> -->
     <div class="select">
         <div class="title">
             <div>Select YEAR : </div>
@@ -149,12 +147,6 @@ svg:hover text.texttip {
             <div id="selectdate"></div>
         </div> -->
     </div>
-
-   <!-- <div class="colors">
-        <div>November</div>
-        <div>December</div>
-        <div>January</div>
-    </div> -->
     
     <div class="linecharts">
         <div id="implinechart"></div>
@@ -289,7 +281,6 @@ svg:hover text.texttip {
                 data.forEach(function (d) {
 
                     d.fulldate = dateFormatParser(d[0]);
-                    // console.log(d[0]);
                     // column name
                     d.impressions = parseInt(d[1]);
                     d.clicks = parseInt(d[2]);
@@ -409,12 +400,6 @@ svg:hover text.texttip {
                                 return d.ctr;
                             }
                         },
-                        // {
-                        //     label: 'Visits',
-                        //     format: function (d) {
-                        //         return formatComma(d.visits);
-                        //     }
-                        // },
                         {
                             label: 'CPC',
                             format: function (d) {
@@ -439,12 +424,6 @@ svg:hover text.texttip {
                                 return formatComma(d.visits);
                             }
                         },
-                        // {
-                        //     label: 'Visits',
-                        //     format: function (d) {
-                        //         return formatComma(d.visits);
-                        //     }
-                        // },
                         {
                             label: 'Revenue',
                             format: function (d) {
@@ -516,7 +495,7 @@ svg:hover text.texttip {
                 flipDimension = ndx.dimension(function (d) { return d.month })
                 flipGroup = flipDimension.group().reduceSum(function (d) { return d[8]; });
 
-                bottomPayments = flipDimension.top(1); // the bottom four payments, by total
+                // bottomPayments = flipDimension.top(1); // the bottom four payments, by total
                 // console.log(bottomPayments); // the smallest payment
                 // console.log(flipGroup); // the smallest payment
 
@@ -524,18 +503,17 @@ svg:hover text.texttip {
                     .width(450)
                     .height(300)
                     // .controlsUseVisibility(false)
-                    .slicesCap(3)
+                    // .slicesCap(3)
                     .innerRadius(25)
                     .externalLabels(45)
                     .externalRadiusPadding(50)
-                    // .colors(["red","blue","yellow","green"])
+                    // .colors(["red","blue","black","green"])
                     // .range(['red', '#ddd', 'blue'])
                     .dimension(flipDimension)
                     .group(flipGroup)
                     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
                     .title(function(d) { return d.key + ': ' + formatComma(d.value); });
-                
-
+            
                 flippiechart.render();
 
 // compositeChart
@@ -570,43 +548,44 @@ svg:hover text.texttip {
 
                 filrevjanGroup = revdateDimension.group().reduceSum(totalForType('January'))
                 revjanGroup = remove_empty_bins(filrevjanGroup);
-                // console.log(revdateDimension.top(1));
+
+                filrevfebGroup = revdateDimension.group().reduceSum(totalForType('February'))
+                revfebGroup = remove_empty_bins(filrevfebGroup);
 
                 revnovChart = dc.lineChart(revcompositeChart)
-                    // .renderArea(true)
                     .colors('red')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(revdateDimension)
                     .group(revnovGroup, 'Nov')
-                    // .dashStyle([2, 2])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 revdecChart = dc.lineChart(revcompositeChart)
-                    // .renderArea(true)
                     .colors('blue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(revdateDimension)
                     .group(revdecGroup, 'Dec')
-                    // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 revjanChart = dc.lineChart(revcompositeChart)
-                    // .renderArea(true)
                     .colors('green')
-                    // .curve(d3.curveCardinal)
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(revdateDimension)
                     .group(revjanGroup, 'Jan')
-                    // .dashStyle([5, 5])
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+                
+                revfebChart = dc.lineChart(visitcompositeChart)
+                    .colors('orange')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(revfebGroup, 'Feb')
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 revcompositeChart
+                    .dimension(revdateDimension)
                     .group(daterevGroup)
                     .width(700)
                     .height(380)
@@ -624,7 +603,8 @@ svg:hover text.texttip {
                     .compose([
                         revnovChart,
                         revdecChart,
-                        revjanChart
+                        revjanChart,
+                        revfebChart
                     ])
                     .yAxis().ticks(6);
 
@@ -653,40 +633,43 @@ svg:hover text.texttip {
                 filvisitjanGroup = visitdateDimension.group().reduceSum(totalForType('January'))
                 visitjanGroup = remove_empty_bins(filvisitjanGroup);
 
+                filvisitfebGroup = visitdateDimension.group().reduceSum(totalForType('February'))
+                visitfebGroup = remove_empty_bins(filvisitfebGroup);
+
                 visitnovChart = dc.lineChart(visitcompositeChart)
-                    // .renderArea(true)
                     .colors('red')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(visitdateDimension)
                     .group(visitnovGroup, 'Nov')
-                    // .dashStyle([2, 2])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 visitdecChart = dc.lineChart(visitcompositeChart)
-                    // .renderArea(true)
                     .colors('blue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(visitdateDimension)
                     .group(visitdecGroup, 'Dec')
-                    // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 visitjanChart = dc.lineChart(visitcompositeChart)
-                    // .renderArea(true)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(visitdateDimension)
                     .group(visitjanGroup, 'Jan')
-                    // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
-                visitcompositeChart  
+                visitfebChart = dc.lineChart(visitcompositeChart)
+                    .colors('orange')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(visitfebGroup, 'Feb')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
+                visitcompositeChart
+                    .dimension(visitdateDimension)  
                     .group(datevisGroup)              
                     .width(700)
                     .height(380)
@@ -704,7 +687,8 @@ svg:hover text.texttip {
                     .compose([
                         visitnovChart,
                         visitdecChart,
-                        visitjanChart
+                        visitjanChart,
+                        visitfebChart
                     ])
                     .yAxis().ticks(6);
 
@@ -732,41 +716,43 @@ svg:hover text.texttip {
                 filspendjanGroup = spenddateDimension.group().reduceSum(totalForType('January'))
                 spendjanGroup = remove_empty_bins(filspendjanGroup);
 
+                filspendfebGroup = spenddateDimension.group().reduceSum(totalForType('February'))
+                spendfebGroup = remove_empty_bins(filspendfebGroup);
 
                 spendnovChart = dc.lineChart(spendcompositeChart)
-                    // .renderArea(true)
                     .colors('red')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(spenddateDimension)
                     .group(spendnovGroup, 'Nov')
-                    // .dashStyle([2, 2])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 spenddecChart = dc.lineChart(spendcompositeChart)
-                    // .renderArea(true)
                     .colors('blue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(spenddateDimension)
                     .group(spenddecGroup, 'Dec')
-                    // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 spendjanChart = dc.lineChart(spendcompositeChart)
-                    // .renderArea(true)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .dimension(spenddateDimension)
                     .group(spendjanGroup, 'Jan')
-                    // .dashStyle([5, 5])
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
+                spendfebChart = dc.lineChart(spendcompositeChart)
+                    .colors('orange')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(visitfebGroup, 'Feb')
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 spendcompositeChart
+                    .dimension(spenddateDimension)
                     .group(datespeGroup)
                     .width(700)
                     .height(380)
@@ -785,7 +771,8 @@ svg:hover text.texttip {
                     .compose([
                         spendnovChart,
                         spenddecChart,
-                        spendjanChart
+                        spendjanChart,
+                        spendfebChart
                     ])
                     .yAxis().ticks(6);
 
@@ -813,40 +800,40 @@ svg:hover text.texttip {
                 filimpjanGroup = impdateDimension.group().reduceSum(totalForType('January'))
                 impjanGroup = remove_empty_bins(filimpjanGroup);
 
+                filimpfebGroup = impdateDimension.group().reduceSum(totalForType('February'))
+                impfebGroup = remove_empty_bins(filimpfebGroup);
+
                 impnovChart = dc.lineChart(impcompositeChart)
-                    // .renderArea(true)
                     .colors('red')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(impdateDimension)
                     .group(impnovGroup, 'Nov')
-                    // .elasticX(true)
                     .elasticY(true)
-                    // .dashStyle([2, 2])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 impdecChart = dc.lineChart(impcompositeChart)
-                    // .renderArea(true)
                     .colors('blue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(impdecGroup, 'Dec')
-                    // .elasticX(true)
                     .elasticY(true)
-                    // .dashStyle([5, 5])
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
                 impjanChart = dc.lineChart(impcompositeChart)
-                    // .renderArea(true)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(impdateDimension)
                     .group(impjanGroup, 'Jan')
-                    // .elasticX(true)
                     .elasticY(true)
-                    // .dashStyle([5, 5])
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
+                impfebChart = dc.lineChart(impcompositeChart)
+                    .colors('orange')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(impfebGroup, 'Feb')
                     .valueAccessor(function (d) {
                         return d.value;
                     })
@@ -870,7 +857,8 @@ svg:hover text.texttip {
                     .compose([
                          impnovChart,
                          impdecChart,
-                         impjanChart
+                         impjanChart,
+                         impfebChart
                     ])
                     .yAxis().ticks(6);
 
@@ -881,7 +869,6 @@ svg:hover text.texttip {
 // barchart
     // visits
         var avgvisitweekDimension = ndx.dimension(function (d) { return d.week })
-        // console.log(avgvisitweekDimension)
 
                 function reduceAdd(p, v) {
                     ++p.count;
@@ -900,18 +887,13 @@ svg:hover text.texttip {
                 }
 
                 var avgvisitweekGroup = avgvisitweekDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-                // console.log(avgvisitweekGroup);
-                // console.log(avgconweekGroup);
-
 
                 avgvisit
                     .width(450)
                     .height(300)
                     .elasticY(true)
-                    // .elasticX(true)
                     .brushOn(true)
                     .colors('#ff8944')
-                    // .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .yAxisLabel('AVG. Visits')
                     .dimension(avgvisitweekDimension)
                     .group(avgvisitweekGroup)
@@ -919,7 +901,6 @@ svg:hover text.texttip {
                     .xUnits(dc.units.ordinal)
                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
                     .title(function(p) { return formatComma(avgvisit.valueAccessor()(p))});
-                    // .xAxis().ticks(7);
                 avgvisit.margins().left += 30;
                 avgvisit.render();
 
@@ -947,23 +928,15 @@ svg:hover text.texttip {
                     .width(450)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .colors('#5aff44')
-                    // .xAxisLabel('Weeeks')
                     .yAxisLabel('AVG. Revenue')
                     .elasticY(true)
-                    // .elasticX(true)
-                    // .yAxisPadding(200)
                     .dimension(avgrevweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
                     .group(avgrevweekGroup)
                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
                     .title(function(p) { return formatComma(avgrev.valueAccessor()(p))});
-                    // .yAxis().ticks(5);
                 avgrev.margins().left += 30;
                 avgrev.render();
 
@@ -992,18 +965,12 @@ svg:hover text.texttip {
                     .width(450)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    // .xAxisLabel('')
                     .colors('#44d0ff')
                     .yAxisLabel('AVG. Orders')
                     .elasticY(true)
-                    // .yAxisPadding(40)
                     .dimension(avgorderweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
                     .group(avgorderweekGroup)                    
                     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
                     .title(function(p) { return formatComma(avgorder.valueAccessor()(p))});
@@ -1036,23 +1003,15 @@ svg:hover text.texttip {
                     .width(450)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    // .xAxisLabel('Weeeks')
                     .colors('#44ffe6')
                     .yAxisLabel('AVG. Cart Value')
-                    // .yAxisPadding(100)
                     .elasticY(true)
                     .dimension(avgcartvweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
                     .group(avgcartvweekGroup)
-                    // parseFloat(x).toFixed(2)+"%"
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.revenue / p.value.orders : 0 })
                     .title(function(p) { return Math.floor(cartvcompositeChart.valueAccessor()(p))});
-                    // .yAxis().ticks(6);
                 cartvcompositeChart.margins().left += 30;
                 cartvcompositeChart.render();
 
@@ -1082,18 +1041,12 @@ svg:hover text.texttip {
                     .width(450)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]))
-                    // .xUnits(d3.timeWeek)
-                    // .x(d3.scaleBand())
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
-                    // .xAxisLabel('Weeeks')
                     .colors('#bd44ff')
                     .yAxisLabel('AVG. Visits / Clicks')
                     .elasticY(true)
-                    // .yAxisPadding(40)
                     .dimension(avgviscliweekDimension)
-                    // .barPadding(0.1)
-                    // .outerPadding(0.05)
                     .group(avgviscliweekGroup)
 
                     .valueAccessor(function (p) { return  p.value.count > 0 ? p.value.visits / p.value.clicks * 100 : 0 })
@@ -1175,28 +1128,20 @@ svg:hover text.texttip {
                 var avgcpvweekGroup = conctrcpvweekDimension.group().reduce(reduceAdd10, reduceRemove10, reduceInitial10);
 
                 avgctr = dc.lineChart(conctrcpvcompositeChart)
-                    // .renderArea(true)
                     .colors('darkorange')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(conctrdateDimension)
                     .group(avgctrweekGroup, 'CTR')
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 })
 
                 avgconversion = dc.lineChart(conctrcpvcompositeChart)
-                    // .renderArea(true)
                     .colors('steelblue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(conctrdateDimension)
                     .group(avgconweekGroup, 'Conversion')
                     .valueAccessor(function (p) { return p.value.count > 0 ? ctr = p.value.orders / p.value.visits * 100 : 0 })
-                    // .title(function(p) { return console.log(p); p.value; })
-                    // .title(function(p) { return parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
 
                 avgcpv = dc.lineChart(conctrcpvcompositeChart)
-                    // .renderArea(true)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(conctrdateDimension)
                     .group(avgcpvweekGroup, 'CPV')
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.spends / p.value.visits : 0 })
 
@@ -1215,7 +1160,6 @@ svg:hover text.texttip {
                     .elasticY(true)
                     .elasticX(true)
                     ._rangeBandPadding(1)
-                    // .title(function(p) { return console.log(p); parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
                     .title(function(p) { return parseFloat(avgctr.valueAccessor()(p)).toFixed(2)+"%", parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
                     .compose([
                         avgctr,
@@ -1231,7 +1175,6 @@ svg:hover text.texttip {
 
                 cpmrvweekDimension = ndx.dimension(d => {
                     var day = d.fulldate.getDay() || 7;
-                    // console.log(day);
                     var name = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                     return `${day}.${name[day]}`;
                 });
@@ -1281,22 +1224,16 @@ svg:hover text.texttip {
                 var avgrvweekGroup = cpmrvweekDimension.group().reduce(reduceAdd9, reduceRemove9, reduceInitial9);
 
                 avgcpm = dc.lineChart(cpmrvcompositeChart)
-                    // .renderArea(true)
                     .colors('#3094ff')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(conctrdateDimension)
                     .group(avgcpmweekGroup, 'CPM')
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.spends / (p.value.imps / 1000) : 0 })
 
                 avgrv = dc.lineChart(cpmrvcompositeChart)
-                    // .renderArea(true)
                     .colors('#ff307f')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    // .dimension(conctrdateDimension)
-                    .group(avgrvweekGroup, 'Revenue per Visit ')
+                    .group(avgrvweekGroup, 'RPV')
                     .valueAccessor(function (p) { return p.value.count > 0 ? ctr = p.value.revenue / p.value.visits : 0 })
-                    // .title(function(p) { return console.log(p); p.value; })
-                    // .title(function(p) { return parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
 
                 cpmrvcompositeChart
                     .group(cpmrvGroup)
@@ -1313,8 +1250,7 @@ svg:hover text.texttip {
                     .elasticY(true)
                     .elasticX(true)
                     ._rangeBandPadding(1)
-                    // .title(function(p) { return console.log(p); parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
-                    .title(function(p) { return parseFloat(avgcpm.valueAccessor()(p)).toFixed(2)+"%", parseFloat(avgrv.valueAccessor()(p)).toFixed(2)+"%"})
+                    .title(function(p) { return parseFloat(avgcpm.valueAccessor()(p)).toFixed(2), parseFloat(avgrv.valueAccessor()(p)).toFixed(2)})
                     .compose([
                         avgcpm,
                         avgrv
@@ -1343,7 +1279,7 @@ svg:hover text.texttip {
                     .renderDataPoints({ radius: 2.5, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .yAxisLabel('', 20)
                     .yAxisPadding(2000)
-                    // .renderHorizontalGridLines(true)
+                    .xAxisPadding(2)
                     .group(pldateGroup, "Profit / Loss")
                     .elasticX(true)
                     .elasticY(true)
