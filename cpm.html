@@ -35,6 +35,9 @@ svg:hover line.tracking {
 svg:hover text.texttip {
   fill-opacity: 1;
 }
+.y-label, .yr-label{
+    font-weight: bolder;
+}
 
     .dc-chart .pie-slice,
     .dc-legend {
@@ -937,6 +940,8 @@ svg:hover text.texttip {
                     .title(function (p) { return formatComma(avgrev.valueAccessor()(p)) });
 
                 revvisitbarcompositeChart
+                    .transitionDuration(500)
+                    .shareTitle(false)
                     .width(800)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]))
@@ -1024,10 +1029,12 @@ svg:hover text.texttip {
                     .useRightYAxis(true)
                     .dimension(avgcartvweekDimension)
                     .group(avgcartvweekGroup, 'Cart Vlaue')
-                    .valueAccessor(function (p) { return p.value.count > 0 ? p.value.revenue / p.value.orders : 0 })
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.revenue / p.value.orders : 0 )})
                     .title(function (p) { return formatComma(cartvChart.valueAccessor()(p)) });
 
                 orderavgcvalubarcompositeChart
+                    .transitionDuration(500)
+                    .shareTitle(false)
                     .width(800)
                     .height(300)
                     .x(d3.scaleBand().domain(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]))
@@ -1174,21 +1181,25 @@ svg:hover text.texttip {
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(avgctrweekGroup, 'CTR')
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.clicks / p.value.imps * 100 : 0 })
+                    .title(function(p) { return parseFloat(avgctr.valueAccessor()(p)).toFixed(2)+"%" } )
 
                 avgconversion = dc.lineChart(conctrcpvcompositeChart)
                     .colors('steelblue')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(avgconweekGroup, 'Conversion')
                     .valueAccessor(function (p) { return p.value.count > 0 ? ctr = p.value.orders / p.value.visits * 100 : 0 })
+                    .title(function(p) { return parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%" } )
 
                 avgcpv = dc.lineChart(conctrcpvcompositeChart)
                     .colors('green')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(avgcpvweekGroup, 'CPV')
                     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.spends / p.value.visits : 0 })
+                    .title(function(p) { return parseFloat(avgcpv.valueAccessor()(p)).toFixed(2) } )
 
                 conctrcpvcompositeChart
                     .group(conctrcpvweekGroup)
+                    .shareTitle(false)
                     .width(700)
                     .height(380)
                     .dimension(conctrcpvweekDimension)
@@ -1202,7 +1213,6 @@ svg:hover text.texttip {
                     .elasticY(true)
                     .elasticX(true)
                     ._rangeBandPadding(1)
-                    .title(function(p) { return parseFloat(avgctr.valueAccessor()(p)).toFixed(2)+"%", parseFloat(avgconversion.valueAccessor()(p)).toFixed(2)+"%"})
                     .compose([
                         avgctr,
                         avgconversion,
@@ -1269,16 +1279,19 @@ svg:hover text.texttip {
                     .colors('#3094ff')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(avgcpmweekGroup, 'CPM')
-                    .valueAccessor(function (p) { return p.value.count > 0 ? p.value.spends / (p.value.imps / 1000) : 0 })
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.spends / (p.value.imps / 1000) : 0 )})
+                    .title(function (p) { return formatComma(avgcpm.valueAccessor()(p)) });
 
                 avgrv = dc.lineChart(cpmrvcompositeChart)
                     .colors('#ff307f')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
                     .group(avgrvweekGroup, 'RPV')
-                    .valueAccessor(function (p) { return p.value.count > 0 ? ctr = p.value.revenue / p.value.visits : 0 })
+                    .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? ctr = p.value.revenue / p.value.visits : 0 )})
+                    .title(function (p) { return formatComma(avgrv.valueAccessor()(p)) });
 
                 cpmrvcompositeChart
                     .group(cpmrvGroup)
+                    .shareTitle(false)
                     .width(700)
                     .height(380)
                     .dimension(cpmrvweekDimension)
@@ -1292,7 +1305,6 @@ svg:hover text.texttip {
                     .elasticY(true)
                     .elasticX(true)
                     ._rangeBandPadding(1)
-                    .title(function(p) { return parseFloat(avgcpm.valueAccessor()(p)).toFixed(2), parseFloat(avgrv.valueAccessor()(p)).toFixed(2)})
                     .compose([
                         avgcpm,
                         avgrv
