@@ -19,6 +19,9 @@
     body{
         min-width: 1400px;
     }
+    a {
+        color: #ffffff;
+    }
     line.tracking, text.texttip {
   stroke-opacity: 0;
   fill-opacity: 0;
@@ -43,13 +46,22 @@ svg:hover text.texttip {
     .dc-legend {
         font-size: 16px;
     }
+
+.contain{
+    display: flex;
+    width: 100%;
+}
+.select {
+    display: flex;
+    width: 50%;
+}
     .select, .linepie {
         display: flex;
         flex-flow: row wrap;
         align-items: flex-end;
         justify-content: space-around; 
         width: 100%;
-        max-width: 1600px;
+        /* max-width: 1600px; */
         padding: 1% 0;
         /* border-top: 1px dotted black; */
         border-bottom: 2px dotted black;
@@ -59,14 +71,44 @@ svg:hover text.texttip {
         display: flex;
         justify-content: center;
     }
-    .title, .linecharts > div, .othercharts > div {
+    .title, .linecharts > div, .pierpv {
         display: flex;
         justify-content: center;
         flex-flow: row wrap;
-        width: 50%;
+        /* width: 100%; */
     }
-    .title > div, .barcharts > div {
-        padding: 1% 0.5% 1% 0.5%;
+    .nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 43px;
+        background-color: #80add7 ;
+    }
+    .navig {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        border-bottom: 1px solid #80add7;
+        height: 36px;
+        padding: 0% 1%;
+    }
+    .navig:hover{
+        text-decoration: none;
+        border-bottom: 1px solid #ffffff;
+    }
+    .link {
+        width: 100px;
+        height:40px;
+        border: 1px solid #ffffff;
+        background-color: #0abda0;
+        color: #FCF6F5FF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .title > div, .datatab > div {
+        padding: 4% 0%;
     }
     .barcharts > div {
         display: flex;
@@ -75,6 +117,12 @@ svg:hover text.texttip {
         min-height: 410px;
         justify-content: flex-end;
         align-items: center;
+    }
+    .section{
+        padding: 0.5%;
+    }
+    .section:nth-of-type(1){
+        border-right: 2px dotted #000;
     }
     /* .barcharts > div {
         display: flex;
@@ -100,15 +148,6 @@ svg:hover text.texttip {
         top: 0;
         right: 0; 
         width: 100px; 
-    }
-    .link {
-        width: 100px;
-        height:40px;
-        border: 1px solid skyblue;
-        background-color: #e5e5e5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
     .colors {
         display: flex;
@@ -156,118 +195,101 @@ svg:hover text.texttip {
             <div class="link"><a href="javascript:dc.filterAll(); dc.redrawAll();">Reset All</a></div>
         </div>
     </div>
-    
-    <!-- <div id="chart_div"></div> -->
-
-
-   <!-- <div class="colors">
-        <div>November</div>
-        <div>December</div>
-        <div>January</div>
-    </div> -->
-    <div class="linepie">
-        <div id="revviscompositeChart"></div>
-    
-        <div id="flippiechart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span>
+    <div class="nav">
+        <a class="navig" href="https://ad.hockeycurve.com/ad.php?zoneid=special&client=flipkart&fcat=daily&staging=only"><b>Daily revenue</b>&nbsp;Dashboard</a>
+        <a class="navig" href="https://ad.hockeycurve.com/ad.php?zoneid=special&client=flipkart&fcat=bucateg&staging=only"><b>Category</b>&nbsp;Dashboard</a>
+    </div>
+    <div class="contain">
+        <div class="section">
+            <div class="linepie">
+                <div id="revviscompositeChart"></div>
             </div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:flippiechart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-            <!-- <div>Revenue</div> -->
-        </div> 
-    </div>
-    <!-- <div class="linecharts">
-        <div id="revlinechart"></div>
-        <div id="visitlinechart"></div>
-        <div id="spendlinechart"></div>
-    </div> -->
-    <div class="select">
-
-        <!-- <div class="title">
-            <div>Dimension</div>
-            <div id="selectdate2"></div>
-        </div> -->
-        <div class="title">
-            <div>Date</div>
-            <div id="selectdate"></div>
-        </div>
-        <div class="title">
-            <div>CID</div>
-            <div id="selectcid"></div>
-        </div>
-        <!-- <div class="title">
-            <div>CID</div>
-            <div id="numberbox"></div>
-        </div> -->
-
-    </div>
-    <div id="cidrev">
-        <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-        <div class="reset"><a class="reset" style="display: none;"
-                href="javascript:cidrev.filterAll();dc.redrawAll();">Reset</a></div>
-        <div class="clearfix"></div>
-    </div>
-    <!-- <div class="barcharts">
-        <div id="barvisit">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:avgvisit.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
-        <div id="barrev">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:avgrev.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
-        <div id="barorder">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:avgorder.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
     
-    <div class="barcharts">
-
+            <div class="select">
     
-
+                <div class="title">
+                    <div>Date :&nbsp;</div>
+                    <div id="selectdate"></div>
+                </div>
+                <div class="title">
+                    <div>Dimension :&nbsp;</div>
+                    <div id="selectdim"></div>
+                </div>
+                <div class="title">
+                    <div>CID :&nbsp;</div>
+                    <div id="selectcid"></div>
+                </div>
     
-        <div id="visclicompositeChart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:visclicompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
+            </div>
+                
+            <div class="datatab">
+                <div id="table" class="table"></div>
+            </div>
+            <div class="pierpv">
+            <div id="flippiechart">
+                <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter"
+                        style="display: none;"></span>
+                </div>
+                <div class="reset"><a class="reset" style="display: none;"
+                        href="javascript:flippiechart.filterAll();dc.redrawAll();">Reset</a></div>
+                <div class="clearfix"></div>
+            </div>
+            <div id="cidrev">
+                <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter"
+                        style="display: none;"></span>
+                </div>
+                <div class="reset"><a class="reset" style="display: none;"
+                        href="javascript:cidrev.filterAll();dc.redrawAll();">Reset</a></div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        </div>
+        <div class="section">
+            <div class="linepie">
+                <div id="revviscompositeChart2"></div>
+            </div>
+    
+            <div class="select">
+    
+                <div class="title">
+                    <div>Date :&nbsp;</div>
+                    <div id="selectdate2"></div>
+                </div>
+                <div class="title">
+                    <div>Dimension :&nbsp;</div>
+                    <div id="selectdim2"></div>
+                </div>
+                <div class="title">
+                    <div>CID :&nbsp;</div>
+                    <div id="selectcid2"></div>
+                </div>
+    
+            </div>
+                
+            <div class="datatab">
+                <div id="table2" class="table"></div>
+            </div>
+            <div class="pierpv">
+            <div id="flippiechart2">
+                <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter"
+                        style="display: none;"></span>
+                </div>
+                <div class="reset"><a class="reset" style="display: none;"
+                        href="javascript:flippiechart.filterAll();dc.redrawAll();">Reset</a></div>
+                <div class="clearfix"></div>
+            </div>
+            <div id="cidrev2">
+                <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter"
+                        style="display: none;"></span>
+                </div>
+                <div class="reset"><a class="reset" style="display: none;"
+                        href="javascript:cidrev.filterAll();dc.redrawAll();">Reset</a></div>
+                <div class="clearfix"></div>
+            </div>
+            </div>
+
         </div>
     </div>
-    <div class="linecharts">
-        <div id="conctrcpvcompositeChart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:conctrcpvcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
-    
-        <div id="cpmrvcompositeChart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span></div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:cpmrvcompositeChart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-
-    <div class="linechart">
-        <div class="header">HockeyCurve Profit / Loss Timeline</div>
-        <div id="pllinechart"></div>
-    </div> -->
-
-    <div class="datatab">
-        <div id="table" class="table"></div>
-        <!-- <div id="dimtable" class="table"></div> -->
-
-    </div>
-
     <script>
         !(function () {
 
@@ -296,6 +318,8 @@ svg:hover text.texttip {
                     }
                 }
                 rendering(DataArray);
+                renderings(DataArray);
+
                 // console.log(DataArray)
             }
 
@@ -343,16 +367,12 @@ svg:hover text.texttip {
                 });
 
                 selectdate = dc.selectMenu('#selectdate');
-                // selectdate2 = dc.selectMenu('#selectdate2');
                 selectDim = dc.selectMenu('#selectdim');
                 selectCid = dc.selectMenu('#selectcid');
 
-                flippiechart = dc.pieChart("#flippiechart");
+                // flippiechart = dc.pieChart("#flippiechart");
                 // cidrev = dc.rowChart("#cidrev");
                 table = dc.dataTable('#table');
-                // dimtable = dc.dataTable('#dimtable');
-
-                // boxND    =  dc.numberDisplay("#numberbox");
                 
                 revviscompositeChart = dc.compositeChart("#revviscompositeChart");
 
@@ -371,17 +391,7 @@ svg:hover text.texttip {
 
                 selectCid.render();
 
-// // month
-//                 weekDimension = ndx.dimension(function (d) { return d.week })
-
-//                 selectWeek
-//                     .dimension(weekDimension)
-//                     .group(weekDimension.group())
-//                     .controlsUseVisibility(true);
-
-//                 selectWeek.render();
-
-// month
+// dimension
                 dimDimension = ndx.dimension(function (d) { return d.dimension })
 
                 selectDim
@@ -402,26 +412,7 @@ svg:hover text.texttip {
 
                 selectdate.render();
 
-// // date
-
-//                 datesssDimension = ndx.dimension(function (d) { return daymonthFormat(d.fulldate) })
-
-//                 selectdate2
-//                     .dimension(datesssDimension)
-//                     .group(datesssDimension.group())
-//                     .controlsUseVisibility(true);
-
-//                 selectdate2.render();
-
-// box
-
-                // boxND
-                //     // .formatNumber(d3.format(".3s"))
-                //     // .group(cidrevGroup.group())
-                //     .valueAccessor(function (p) { return p.value.count > 0 ? p.value.revenue / p.value.visits : 0 })
-                //     .group(cidrevboxGroup);
-                
-                // boxND.render();
+// table
 
                 cidDimension = ndx.dimension(function (d) { return d.cid })
 
@@ -485,87 +476,28 @@ svg:hover text.texttip {
                                 
                 table.render();
 
-                dimenDimension = ndx.dimension(function (d) { return d.dimension })
-//                 dimenGroup = dimenDimension.group();
-
-
-// dimtable
-//     .dimension(dimenDimension)
-//     // .group(dimenDimension.group())
-//     .section(function (d) { return d.dimension })
-//     // .size(31)
-//     .columns([
-//         // {
-//         //     label: 'Cid',
-//         //     format: function (d) {
-//         //         return daymonthFormat(d.fulldate);
-//         //     }
-//         // },
-//         {
-//             label: 'Revenue',
-//             format: function (d) {
-//                 return formatComma(d.revenue);
-//             }
-//         },
-//         {
-//             label: 'Visits',
-//             format: function (d) {
-//                 return d.visits;
-//             }
-//         },
-//         {
-//             label: 'Order',
-//             format: function (d) {
-//                 return formatComma(d.orders);
-//             }
-//         },
-//         {
-//             label: 'RPV',
-//             format: function (d) {
-//                 return parseInt(d.visits > 0 ? d.revenue / d.visits : 0);
-//             }
-//         },
-//         {
-//             label: 'Avg Cart Value',
-//             format: function (d) {
-//                 return parseInt(d.orders > 0 ? d.revenue / d.orders : 0);
-//             }
-//         },
-//         {
-//             label: 'Conversion',
-//             format: function (d) {
-//                 return parseFloat(d.orders > 0 ? (d.revenue / d.visits) / (d.revenue / d.orders) * 100 : 0).toFixed(2) + "%";
-//             }
-//         },
-//     ])
-//     .sortBy(function (d) { return d.revenue })
-//     .order(d3.descending);
-                
-//     dimtable.render();
-
 // pie
     // flipkart
-                // colorScale = d3.scale.ordinal().range(["#eeff00", "#ff0022", "#2200ff"]);
 
-                flipDimension = ndx.dimension(function (d) { return d.dimension })
-                flipGroup = flipDimension.group().reduceSum(function (d) { return d.revenue; });
+                // flipDimension = ndx.dimension(function (d) { return d.dimension })
+                // flipGroup = flipDimension.group().reduceSum(function (d) { return d.revenue; });
 
-                flippiechart
-                    .width(450)
-                    .height(300)
-                    .innerRadius(25)
-                    .externalLabels(45)
-                    .externalRadiusPadding(50)
-                    .dimension(flipDimension)
-                    .group(flipGroup)
-                    .cap(4)
-                    // .colors(colorScale)
-                    // .color(d3.scale.ordinal().range(['#28a745','#20c997','#17a2b8','#6f42c1','#e83e8c','#dc3545']))
-                    // .legend(dc.legend().y(10).itemHeight(13).gap(10))
-                    .title(function(d) { return formatComma(d.value); });
+                // flippiechart
+                //     .width(450)
+                //     .height(300)
+                //     .innerRadius(25)
+                //     .externalLabels(45)
+                //     .externalRadiusPadding(50)
+                //     .dimension(flipDimension)
+                //     .group(flipGroup)
+                //     .cap(4)
+                //     // .colors(colorScale)
+                //     // .color(d3.scale.ordinal().range(['#28a745','#20c997','#17a2b8','#6f42c1','#e83e8c','#dc3545']))
+                //     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
+                //     .title(function(d) { return formatComma(d.value); });
                 
 
-                flippiechart.render();
+                // flippiechart.render();
 
 
 // // compositeChart
@@ -612,13 +544,13 @@ svg:hover text.texttip {
                     .group(datespeGroup)
                     .transitionDuration(500)
                     .shareTitle(false)
-                    .width(800)
+                    .width(704)
                     .height(380)
                     .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisPadding('10%')
-                    .yAxisLabel("Revenue", 100)
+                    .yAxisLabel("Revenue", 80)
                     .rightYAxisLabel("Visits")
                     .legend(dc.legend().x(10).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
@@ -639,8 +571,6 @@ svg:hover text.texttip {
                 revviscompositeChart.render();
 
     // CID
-
-                // var cidrevGroup = cidrevDimension.group().reduceSum(function (d) { return d.revenue });
 
                 var cidrevDimension = ndx.dimension(function (d) { return d.cid })
 
@@ -664,38 +594,8 @@ svg:hover text.texttip {
 
                 var cidrevGroup = cidrevDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
 
-                // var cidrevboxDimension = ndx.dimension(function (d) { return d.cid })
-
-                // function reduceAdd2(p, v) {
-                //     ++p.count;
-                //     p.revenue += v.revenue;
-                //     p.visits += v.visits;
-                //     return p;
-                // }
-
-                // function reduceRemove2(p, v) {
-                //     --p.count;
-                //     p.revenue -= v.revenue;
-                //     p.visits -= v.visits;
-                //     return p;
-                // }
-
-                // function reduceInitial2() {
-                //     return { count:0, visits: 0, revenue: 0 };
-                // }
-
-                // var cidrevboxGroup = cidrevboxDimension.groupAll().reduce(reduceAdd2, reduceRemove2, reduceInitial2);
-
-                // avgvisit = dc.barChart(revvisitbarcompositeChart)
-                //     .colors('#44d0ff')
-                //     // .gap(gap)
-                //     .dimension(cidrevGroup)
-                //     .group(cidrevGroup, 'RPV')
-                //     .valueAccessor(function (p) { return Math.floor(p.value.count > 0 ? p.value.total / p.value.count : 0); })
-                //     .title(function (p) { return formatComma(avgvisit.valueAccessor()(p)) });
-
                 // cidrev
-                //     .width(1360)
+                //     .width(700)
                 //     .height(420)
                 //     .elasticX(true)
                 //     // .yAxisPadding(40)
@@ -714,6 +614,302 @@ svg:hover text.texttip {
                 //     });
                 // cidrev.margins().top += 20;
                 // cidrev.render();
+
+            }
+
+            function renderings(data) {
+
+// declaration
+                var formatComma = d3.format(",");
+
+                var dateFormatSpecifier = '%m/%d/%Y';
+                var daymonthFormatSpecifier = '%d %b';
+                var monthFormatSpecifier = '%B';
+                var monthyearFormatSpecifier = '%B, %Y';
+                var yearFormatSpecifier = '%Y';
+                var dayFormatSpecifier = '%_d';
+                var weekFormatSpecifier = '%a';
+
+                var timeFormat = d3.timeFormat(dateFormatSpecifier);
+                var monthFormat = d3.timeFormat(monthFormatSpecifier);
+                var yearFormat = d3.timeFormat(yearFormatSpecifier);
+                var dayFormat = d3.timeFormat(dayFormatSpecifier);
+                var daymonthFormat = d3.timeFormat(daymonthFormatSpecifier);
+                var monthyearFormat = d3.timeFormat(monthyearFormatSpecifier);
+                var weekFormat = d3.timeFormat(weekFormatSpecifier);
+
+                var dateFormatParser = d3.timeParse(dateFormatSpecifier);
+
+                data.forEach(function (d) {
+
+                    d.fulldate = dateFormatParser(d[0]);
+                    // console.log(d.fulldate);
+                    // column name
+                    d.dimension = d[1];
+                    d.cid = parseInt(d[2]);
+                    d.revenue = parseInt(d[3]);
+                    d.visits = parseInt(d[4]);
+                    d.orders = parseInt(d[5]);
+
+                    // pre-calculate better performance
+                    // d.fulldate = timeFormat(d.fulldate)
+                    d.month = monthFormat(d3.timeMonth(d.fulldate));
+                    d.year = yearFormat(d3.timeMonth(d.fulldate)); 
+                    d.date = parseInt(dayFormat(d3.timeDay(d.fulldate)));
+                    d.week = weekFormat(d3.timeDay(d.fulldate));
+                    // console.log((d.week))
+                });
+
+                selectdate = dc.selectMenu('#selectdate2');
+                selectDim = dc.selectMenu('#selectdim2');
+                selectCid = dc.selectMenu('#selectcid2');
+
+                // flippiechart = dc.pieChart("#flippiechart2");
+                // cidrev = dc.rowChart("#cidrev2");
+                table = dc.dataTable('#table2');
+                
+                revviscompositeChart = dc.compositeChart("#revviscompositeChart2");
+
+                var ndxx = crossfilter(data)
+                var all = ndxx.groupAll();
+
+// select
+
+// cid
+                cidDimension = ndxx.dimension(function (d) { return d.cid })
+
+                selectCid
+                    .dimension(cidDimension)
+                    .group(cidDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectCid.render();
+
+// dimension
+                dimDimension = ndxx.dimension(function (d) { return d.dimension })
+
+                selectDim
+                    .dimension(dimDimension)
+                    .group(dimDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectDim.render();
+
+// date
+
+                datessDimension = ndxx.dimension(function (d) { return daymonthFormat(d.fulldate) })
+
+                selectdate
+                    .dimension(datessDimension)
+                    .group(datessDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectdate.render();
+
+// table
+
+                cidDimension = ndxx.dimension(function (d) { return d.cid })
+
+                table
+                .dimension(cidDimension)
+
+                .section(function (d) { return d.dimension; })
+                    // .size(31)
+                    .columns([
+                        {
+                            label: 'Date',
+                            format: function (d) {
+                                return daymonthFormat(d.fulldate);
+                            }
+                        },
+                        {
+                            label: 'Cid',
+                            format: function (d) {
+                                return d.cid;
+                            }
+                        },
+                        {
+                            label: 'Revenue',
+                            format: function (d) {
+                                return formatComma(d.revenue);
+                            }
+                        },
+                        {
+                            label: 'Visits',
+                            format: function (d) {
+                                return d.visits;
+                            }
+                        },
+                        {
+                            label: 'Order',
+                            format: function (d) {
+                                return formatComma(d.orders);
+                            }
+                        },
+                        {
+                            label: 'RPV',
+                            format: function (d) {
+                                return parseInt(d.visits > 0 ? d.revenue / d.visits : 0);
+                            }
+                        },
+                        {
+                            label: 'Avg Cart Value',
+                            format: function (d) {
+                                return parseInt(d.orders > 0 ? d.revenue / d.orders : 0);
+                            }
+                        },
+                        {
+                            label: 'Conversion',
+                            format: function (d) {
+                                return parseFloat(d.orders > 0 ? (d.revenue / d.visits) / (d.revenue / d.orders) * 100 : 0).toFixed(2) + "%";
+                            }
+                        },
+                    ])
+                    .sortBy(function (d) { return d.fulldate })
+                    .order(d3.descending);
+                                
+                table.render();
+
+// pie
+    // flipkart
+
+                // flipDimension = ndxx.dimension(function (d) { return d.dimension })
+                // flipGroup = flipDimension.group().reduceSum(function (d) { return d.revenue; });
+
+                // flippiechart
+                //     .width(450)
+                //     .height(300)
+                //     .innerRadius(25)
+                //     .externalLabels(45)
+                //     .externalRadiusPadding(50)
+                //     .dimension(flipDimension)
+                //     .group(flipGroup)
+                //     .cap(4)
+                //     // .colors(colorScale)
+                //     // .color(d3.scale.ordinal().range(['#28a745','#20c997','#17a2b8','#6f42c1','#e83e8c','#dc3545']))
+                //     // .legend(dc.legend().y(10).itemHeight(13).gap(10))
+                //     .title(function(d) { return formatComma(d.value); });
+                
+
+                // flippiechart.render();
+
+
+// // compositeChart
+//     // revenue
+
+        function remove_empty_bins(source_group) {
+            return {
+                all: function () {
+                    return source_group.all().filter(function (d) {
+                        return d.value !== 0;
+                    });
+                }
+            };
+        }
+// line
+                revvisDimension = ndxx.dimension(function (d) { return d.date; });
+                fildatespeGroup = revvisDimension.group().reduceSum(function (d) { return d.date; });
+                datespeGroup = remove_empty_bins(fildatespeGroup)
+
+                filrevGroup = revvisDimension.group().reduceSum(function (d) { return d.revenue; });
+                revGroup = remove_empty_bins(filrevGroup)
+
+                filvisGroup = revvisDimension.group().reduceSum(function (d) { return d.visits; });
+                visGroup = remove_empty_bins(filvisGroup)
+
+                revChart = dc.lineChart(revviscompositeChart)
+                    .colors('green')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(revGroup, 'revenue')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+                visitsChart = dc.lineChart(revviscompositeChart)
+                    .colors('orange')
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(visGroup, 'visits')
+                    .useRightYAxis(true)
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
+                revviscompositeChart
+                    .dimension(revvisDimension)
+                    .group(datespeGroup)
+                    .transitionDuration(500)
+                    .shareTitle(false)
+                    .width(704)
+                    .height(380)
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
+                    .xUnits(dc.units.ordinal)
+                    .brushOn(false)
+                    .yAxisPadding('10%')
+                    .yAxisLabel("Revenue", 80)
+                    .rightYAxisLabel("Visits")
+                    .legend(dc.legend().x(10).y(20).itemHeight(15).gap(5))
+                    .renderHorizontalGridLines(true)
+                    .renderVerticalGridLines(true)
+                    .elasticX(true)
+                    .elasticY(true)
+                    ._rangeBandPadding(1)
+                    // .colors(d3.scaleSequential(d3.interpolatePiYG))
+                    .title(function(d) { return formatComma(d.value); })
+                    .compose([
+                        revChart,
+                        visitsChart,
+                    ])
+                    .yAxis().ticks(6);
+
+                revviscompositeChart.margins().left += 30;
+                revviscompositeChart.margins().right += 20;
+                revviscompositeChart.render();
+
+    // CID
+
+                // var cidrevDimension = ndxx.dimension(function (d) { return d.cid })
+
+                // function reduceAdd(p, v) {
+                //     ++p.count;
+                //     p.revenue += v.revenue;
+                //     p.visits += v.visits;
+                //     return p;
+                // }
+
+                // function reduceRemove(p, v) {
+                //     --p.count;
+                //     p.revenue -= v.revenue;
+                //     p.visits -= v.visits;
+                //     return p;
+                // }
+
+                // function reduceInitial() {
+                //     return { count:0, visits: 0, revenue: 0 };
+                // }
+
+                // var cidrevGroup = cidrevDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
+
+                // cidrev
+                //     .width(700)
+                //     .height(420)
+                //     .elasticX(true)
+                //     // .yAxisPadding(40)
+                //     .dimension(cidrevDimension)
+                //     .xAxis(d3.axisTop())
+                //     .group(cidrevGroup)
+                //     .cap(14)
+                //     .valueAccessor(function (p) { return p.value.count > 0 ? ctr = p.value.revenue / p.value.visits : 0 })
+                //     .title(function(p) { return formatComma(cidrev.valueAccessor()(p)) })
+                //     .ordering(function(p) { return -formatComma(cidrev.valueAccessor()(p)) })
+                //     // .sortBy(function(p) { return parseInt(cidrev.valueAccessor()(p)) })
+                //     // .order(d3.descending)
+                //     cidrev.on('pretransition', function() {
+                //         cidrev.select('g.axis').attr('transform', 'translate(0,0)');
+                //         cidrev.selectAll('line.grid-line').attr('y2', cidrev.effectiveHeight());
+                //     });
+                // cidrev.margins().top += 20;
+                // cidrev.render();
+
+                // dc.rederAll();
 
             }
 
