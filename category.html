@@ -213,10 +213,10 @@ svg:hover text.texttip {
             <div>Date</div>
             <div id="selectdate"></div>
         </div>
-        <div class="title">
+        <!-- <div class="title">
             <div>Dimension</div>
             <div id="selectdim"></div>
-        </div>
+        </div> -->
 
     </div>
     <!-- <div id="cidrev">
@@ -280,15 +280,8 @@ svg:hover text.texttip {
     </div> -->
 
     <div class="datatab">
-        <div id="table" class="table"></div>
-        <div id="flippiechart">
-            <div class="reset" style="display: none;">Selected :&nbsp;<span class="filter" style="display: none;"></span>
-            </div>
-            <div class="reset"><a class="reset" style="display: none;"
-                    href="javascript:flippiechart.filterAll();dc.redrawAll();">Reset</a></div>
-            <div class="clearfix"></div>
-            <!-- <div>Revenue</div> -->
-        </div> 
+        <div id="flippiecatchart"></div> 
+        <div id="flippiedimchart"></div> 
         <!-- <div id="dimtable" class="table"></div> -->
     </div>
 
@@ -368,10 +361,11 @@ svg:hover text.texttip {
 
                 selectdate = dc.selectMenu('#selectdate');
                 // selectdate2 = dc.selectMenu('#selectdate2');
-                selectDim = dc.selectMenu('#selectdim');
+                // selectDim = dc.selectMenu('#selectdim');
                 selectCid = dc.selectMenu('#selectcid');
 
-                flippiechart = dc.pieChart("#flippiechart");
+                flippiecatchart = dc.pieChart("#flippiecatchart");
+                flippiedimchart = dc.pieChart("#flippiedimchart");
                 // cidrev = dc.rowChart("#cidrev");
                 // table = dc.dataTable('#table');
                 // dimtable = dc.dataTable('#dimtable');
@@ -421,14 +415,14 @@ svg:hover text.texttip {
 
 // dimension
 
-                dimDimension = ndx.dimension(function (d) { return d.dimension })
+                // dimDimension = ndx.dimension(function (d) { return d.dimension })
 
-                selectDim
-                    .dimension(dimDimension)
-                    .group(dimDimension.group())
-                    .controlsUseVisibility(true);
+                // selectDim
+                //     .dimension(dimDimension)
+                //     .group(dimDimension.group())
+                //     .controlsUseVisibility(true);
 
-                selectDim.render();
+                // selectDim.render();
 
 // box
 
@@ -563,28 +557,48 @@ svg:hover text.texttip {
 var gap = 63, translate = -31;
 
 // pie
-    // flipkart
+    // category
                 // colorScale = d3.scale.ordinal().range(["#eeff00", "#ff0022", "#2200ff"]);
 
-                flipDimension = ndx.dimension(function (d) { return d.category })
-                flipGroup = flipDimension.group().reduceSum(function (d) { return d.revenue; });
+                flipcatDimension = ndx.dimension(function (d) { return d.category })
+                flipcatGroup = flipcatDimension.group().reduceSum(function (d) { return d.revenue; });
 
-                flippiechart
-                    .width(1000)
+                flippiecatchart
+                    .width(850)
                     .height(700)
                     .innerRadius(25)
-                    // .externalLabels(70)
-                    .externalRadiusPadding(80)
-                    .dimension(flipDimension)
-                    .group(flipGroup)
+                    .externalRadiusPadding(60)
+                    .dimension(flipcatDimension)
+                    .group(flipcatGroup)
+                    .colors(d3.scaleOrdinal().range(d3.schemeTableau10))
                     // .cap(4)
                     // .colors(colorScale)
                     // .color(d3.scale.ordinal().range(['#28a745','#20c997','#17a2b8','#6f42c1','#e83e8c','#dc3545']))
-                    .legend(dc.legend().y(10).itemHeight(13).gap(10))
+                    .legend(dc.legend().y(20).itemHeight(13).gap(10))
                     .title(function(d) { return formatComma(d.value); });
                 
 
-                flippiechart.render();
+                flippiecatchart.render();
+
+    // dimension
+
+                flipdimDimension = ndx.dimension(function (d) { return d.dimension })
+                flipdimGroup = flipdimDimension.group().reduceSum(function (d) { return d.revenue; });
+
+                flippiedimchart
+                    .width(550)
+                    .height(650)
+                    .innerRadius(25)
+                    // .externalLabels(45)
+                    .externalRadiusPadding(60)
+                    .dimension(flipdimDimension)
+                    .group(flipdimGroup)
+                    .colors(d3.scaleOrdinal().range(d3.schemePaired))
+                    .legend(dc.legend().x(10).y(20).itemHeight(13).gap(10))
+                    .title(function(d) { return formatComma(d.value); });
+                
+
+                flippiedimchart.render();
 
 
 // // compositeChart
