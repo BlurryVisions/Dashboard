@@ -187,6 +187,7 @@
     .dc-table-label {
         color: blueviolet;
     }
+
 </style>
 
 <body>
@@ -661,9 +662,8 @@
                 revcompositeChart
                     .dimension(revdateDimension)
                     .group(daterevGroup)
-                    .margins({ left: 30, right: 30, top: 20, bottom: 20 })
                     .width(700)
-                    .height(400)
+                    .height(380)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
@@ -684,9 +684,9 @@
                     ])
                     .yAxis().ticks(5);
 
-                revcompositeChart.margins().left += 30;
-                revcompositeChart.margins().top += 20;
-                revcompositeChart.margins().bottom += 20;
+                revcompositeChart.margins().left += 20;
+                revcompositeChart.margins().top += 10;
+                revcompositeChart.margins().bottom += 10;
 
                 revcompositeChart.render();
 
@@ -751,12 +751,12 @@
                     .dimension(visitdateDimension)
                     .group(datevisGroup)
                     .width(700)
-                    .height(400)
+                    .height(380)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("", 20)
-                    .yAxisPadding(5000)
+                    .yAxisPadding(2000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
                     .renderVerticalGridLines(true)
@@ -773,8 +773,8 @@
                     .yAxis().ticks(5);
 
                 visitcompositeChart.margins().left += 20;
-                visitcompositeChart.margins().top += 20;
-                visitcompositeChart.margins().bottom += 20;
+                visitcompositeChart.margins().top += 10;
+                visitcompositeChart.margins().bottom += 10;
 
                 visitcompositeChart.render();
 
@@ -838,12 +838,12 @@
                     .dimension(spenddateDimension)
                     .group(datespeGroup)
                     .width(700)
-                    .height(400)
+                    .height(380)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("", 20)
-                    .yAxisPadding(4000)
+                    .yAxisPadding(2000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
                     .renderVerticalGridLines(true)
@@ -862,8 +862,8 @@
                     .yAxis().ticks(5);
 
                 spendcompositeChart.margins().left += 20;
-                spendcompositeChart.margins().top += 20;
-                spendcompositeChart.margins().bottom += 20;
+                spendcompositeChart.margins().top += 10;
+                spendcompositeChart.margins().bottom += 10;
 
                 spendcompositeChart.render();
 
@@ -929,7 +929,7 @@
                 impcompositeChart
                     .group(dateGroup)
                     .width(700)
-                    .height(400)
+                    .height(380)
                     .dimension(impdateDimension)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
@@ -951,8 +951,8 @@
                     ])
                     .yAxis().ticks(6);
 
-                impcompositeChart.margins().left += 30;
-                impcompositeChart.margins().top += 20;
+                impcompositeChart.margins().left += 20;
+                impcompositeChart.margins().top += 10;
                 impcompositeChart.margins().bottom += 10;
 
                 impcompositeChart.render();
