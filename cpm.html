@@ -58,7 +58,7 @@
     }
 
     .select, .daily, .weekly, .timeline {
-        margin: 0.5%;
+        margin: 1% 0.5%;
         border: 1px solid #03353e;
     }
     .daily, .weekly, .timeline {
@@ -187,7 +187,6 @@
     .dc-table-label {
         color: blueviolet;
     }
-
 </style>
 
 <body>
@@ -627,6 +626,9 @@
                 filrevfebGroup = revdateDimension.group().reduceSum(totalForType('February'))
                 revfebGroup = remove_empty_bins(filrevfebGroup);
 
+                filrevmarGroup = revdateDimension.group().reduceSum(totalForType('March'))
+                revmarGroup = remove_empty_bins(filrevmarGroup);
+
                 revnovChart = dc.lineChart(revcompositeChart)
                     .colors(colors[0])
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
@@ -659,11 +661,20 @@
                         return d.value;
                     })
 
+                revmarChart = dc.lineChart(revcompositeChart)
+                    .colors(colors[4])
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(revmarGroup, 'Mar')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
                 revcompositeChart
                     .dimension(revdateDimension)
                     .group(daterevGroup)
+                    .margins({ left: 30, right: 30, top: 20, bottom: 20 })
                     .width(700)
-                    .height(380)
+                    .height(400)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
@@ -680,13 +691,14 @@
                         revnovChart,
                         revdecChart,
                         revjanChart,
-                        revfebChart
+                        revfebChart,
+                        revmarChart
                     ])
                     .yAxis().ticks(5);
 
-                revcompositeChart.margins().left += 20;
-                revcompositeChart.margins().top += 10;
-                revcompositeChart.margins().bottom += 10;
+                revcompositeChart.margins().left += 30;
+                revcompositeChart.margins().top += 20;
+                revcompositeChart.margins().bottom += 20;
 
                 revcompositeChart.render();
 
@@ -714,6 +726,9 @@
 
                 filvisitfebGroup = visitdateDimension.group().reduceSum(totalForType('February'))
                 visitfebGroup = remove_empty_bins(filvisitfebGroup);
+
+                filvisitmarGroup = visitdateDimension.group().reduceSum(totalForType('March'))
+                visitmarGroup = remove_empty_bins(filvisitmarGroup);
 
                 visitnovChart = dc.lineChart(visitcompositeChart)
                     .colors(colors[0])
@@ -747,16 +762,24 @@
                         return d.value;
                     })
 
+                visitmarChart = dc.lineChart(visitcompositeChart)
+                    .colors(colors[4])
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(visitmarGroup, 'Mar')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
                 visitcompositeChart
                     .dimension(visitdateDimension)
                     .group(datevisGroup)
                     .width(700)
-                    .height(380)
+                    .height(400)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("", 20)
-                    .yAxisPadding(2000)
+                    .yAxisPadding(5000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
                     .renderVerticalGridLines(true)
@@ -768,13 +791,14 @@
                         visitnovChart,
                         visitdecChart,
                         visitjanChart,
-                        visitfebChart
+                        visitfebChart,
+                        visitmarChart
                     ])
                     .yAxis().ticks(5);
 
                 visitcompositeChart.margins().left += 20;
-                visitcompositeChart.margins().top += 10;
-                visitcompositeChart.margins().bottom += 10;
+                visitcompositeChart.margins().top += 20;
+                visitcompositeChart.margins().bottom += 20;
 
                 visitcompositeChart.render();
 
@@ -801,6 +825,9 @@
 
                 filspendfebGroup = spenddateDimension.group().reduceSum(totalForType('February'))
                 spendfebGroup = remove_empty_bins(filspendfebGroup);
+
+                filspendmarGroup = spenddateDimension.group().reduceSum(totalForType('March'))
+                spendmarGroup = remove_empty_bins(filspendmarGroup);
 
                 spendnovChart = dc.lineChart(spendcompositeChart)
                     .colors(colors[0])
@@ -834,16 +861,24 @@
                         return d.value;
                     })
 
+                spendmarChart = dc.lineChart(spendcompositeChart)
+                    .colors(colors[4])
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(visitmarGroup, 'Mar')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
                 spendcompositeChart
                     .dimension(spenddateDimension)
                     .group(datespeGroup)
                     .width(700)
-                    .height(380)
+                    .height(400)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisLabel("", 20)
-                    .yAxisPadding(2000)
+                    .yAxisPadding(4000)
                     .legend(dc.legend().x(570).y(20).itemHeight(15).gap(5))
                     .renderHorizontalGridLines(true)
                     .renderVerticalGridLines(true)
@@ -857,13 +892,14 @@
                         spendnovChart,
                         spenddecChart,
                         spendjanChart,
-                        spendfebChart
+                        spendfebChart,
+                        spendmarChart
                     ])
                     .yAxis().ticks(5);
 
                 spendcompositeChart.margins().left += 20;
-                spendcompositeChart.margins().top += 10;
-                spendcompositeChart.margins().bottom += 10;
+                spendcompositeChart.margins().top += 20;
+                spendcompositeChart.margins().bottom += 20;
 
                 spendcompositeChart.render();
 
@@ -890,6 +926,9 @@
 
                 filimpfebGroup = impdateDimension.group().reduceSum(totalForType('February'))
                 impfebGroup = remove_empty_bins(filimpfebGroup);
+
+                filimpmarGroup = impdateDimension.group().reduceSum(totalForType('March'))
+                impmarGroup = remove_empty_bins(filimpmarGroup);
 
                 impnovChart = dc.lineChart(impcompositeChart)
                     .colors(colors[0])
@@ -926,10 +965,18 @@
                         return d.value;
                     })
 
+                impmarChart = dc.lineChart(impcompositeChart)
+                    .colors(colors[4])
+                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                    .group(impmarGroup, 'Feb')
+                    .valueAccessor(function (d) {
+                        return d.value;
+                    })
+
                 impcompositeChart
                     .group(dateGroup)
                     .width(700)
-                    .height(380)
+                    .height(400)
                     .dimension(impdateDimension)
                     .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
                     .xUnits(dc.units.ordinal)
@@ -947,12 +994,13 @@
                         impnovChart,
                         impdecChart,
                         impjanChart,
-                        impfebChart
+                        impfebChart,
+                        impmarChart
                     ])
                     .yAxis().ticks(6);
 
-                impcompositeChart.margins().left += 20;
-                impcompositeChart.margins().top += 10;
+                impcompositeChart.margins().left += 30;
+                impcompositeChart.margins().top += 20;
                 impcompositeChart.margins().bottom += 10;
 
                 impcompositeChart.render();

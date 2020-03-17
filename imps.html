@@ -228,10 +228,14 @@
     <div class="double">
         <!-- <div class="header">Day-wise Trends</div> -->
 
-        <div class="card">
-            <div class="cardhead"><b>Revenue&nbsp;</b>vs<b>&nbsp;Visits</b></div>
-            <div class="cardcont" id="revviscompositeChart"></div>
-        </div>
+        <!--<div class="card">-->
+        <!--    <div class="cardhead"><b>Revenue&nbsp;</b>vs<b>&nbsp;Visits</b></div>-->
+        <!--    <div class="cardcont" id="revviscompositeChart"></div>-->
+        <!--</div>-->
+                <div class="table" id="dimtable"></div>
+                <div class="table" id="butable"></div>
+
+
         <div class="card">
             <div class="cardhead"><b>Avg Cart Value&nbsp;</b>vs<b>&nbsp;Orders</b></div>
             <div class="cardcont" id="orderavgcvalubarcompositeChart"></div>
@@ -241,7 +245,7 @@
 
     <div class="select">
         <div class="title">
-            <div>BU&nbsp;</div>
+            <div>CID&nbsp;</div>
             <div id="selectcid"></div>
         </div>
         <div class="title">
@@ -255,27 +259,17 @@
     </div>
 
     <div class="datatab">
-        <div class="table" id="butable"></div>
-        <div class="table" id="dimtable"></div>
-    </div>
+        
+        <div class="table" id="dimtotaltable"></div>
 
-    <div class="line">
-        <div class="double">
-            <!-- <div class="header">Day-wise Trends</div> -->
-    
-            <div class="card">
-                <div class="cardhead"><b>BU&nbsp;Revenue</b></div>
-                <div class="cardcont" id="BUcompositeChart"></div>
-            </div>
-        </div>
-        </div>
+    </div>
 
     <div class="pie">
         <div class="double">
             <!-- <div class="header">BU & Dimension Pie-Carts</div> -->
     
             <div class="card">
-                <div class="cardhead"><b>BU&nbsp;</b>Pie-Chart</div>
+                <div class="cardhead"><b>CID&nbsp;</b>Pie-Chart</div>
                 <div class="cardcont" id="flippiecatchart"></div>
             </div>
             <div class="card">
@@ -293,7 +287,7 @@
             google.setOnLoadCallback(init);
 
             function init() {
-                var query = new google.visualization.Query("https://docs.google.com/spreadsheet/ccc?key=1sHj3FTEQakptmcMKhGRdRsxbe-5Qaj4L4gofviJqY7o");
+                var query = new google.visualization.Query("https://docs.google.com/spreadsheet/ccc?key=1he1nQOzCubxP90LH6DsB7yZxj08A6-4y9XZsV5QgC9s");
                 query.send(handleQueryResponse);
             }
 
@@ -320,11 +314,9 @@
             function rendering(data) {
 
 // declaration
-            colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabebe', '#469990', '#e6beff', '#808000', '#ffd8b1', '#000075']
-
                 var formatComma = d3.format(",");
 
-                var dateFormatSpecifier = '%m/%d/%Y';
+                var dateFormatSpecifier = '%Y-%m-%d';
                 var daymonthFormatSpecifier = '%d %b';
                 var monthFormatSpecifier = '%B';
                 var monthyearFormatSpecifier = '%B, %Y';
@@ -347,11 +339,12 @@
                     d.fulldate = dateFormatParser(d[0]);
                     // console.log(d.fulldate);
                     // column name
-                    d.dimension = d[1];
-                    d.category = d[2];
-                    d.revenue = parseInt(d[3]);
-                    d.visits = parseInt(d[4]);
-                    d.orders = parseInt(d[5]);
+                    d.client = d[1];
+                    d.cid = d[2];
+                    d.fcat = d[3];
+                    d.dimension = d[4];
+                    d.imps = parseInt(d[5]);
+                    d.clicks = parseInt(d[6]);
 
                     // pre-calculate better performance
                     // d.fulldate = timeFormat(d.fulldate)
@@ -359,6 +352,9 @@
                     d.year = yearFormat(d3.timeMonth(d.fulldate)); 
                     d.date = parseInt(dayFormat(d3.timeDay(d.fulldate)));
                     d.week = weekFormat(d3.timeDay(d.fulldate));
+                    d.daymon = daymonthFormat(d3.timeDay(d.fulldate));
+
+                    
                     // console.log((d.week))
                 });
 
@@ -369,13 +365,14 @@
 
                 flippiecatchart = dc.pieChart("#flippiecatchart");
                 flippiedimchart = dc.pieChart("#flippiedimchart");
+
+                // dimtotaltable = dc.dataTable("#dimtotaltable");
                 butable = dc.dataTable('#butable');
                 dimtable = dc.dataTable('#dimtable');
 
                 // boxND    =  dc.numberDisplay("#numberbox");
                 
-                BUcompositeChart = dc.compositeChart("#BUcompositeChart");
-                revviscompositeChart = dc.compositeChart("#revviscompositeChart");
+                // revviscompositeChart = dc.compositeChart("#revviscompositeChart");
 
                 orderavgcvalubarcompositeChart = dc.compositeChart('#orderavgcvalubarcompositeChart');
 
@@ -386,7 +383,7 @@
 // select
 
 // cid
-                cidDimension = ndx.dimension(function (d) { return d.category })
+                cidDimension = ndx.dimension(function (d) { return d.cid })
 
                 selectCid
                     .dimension(cidDimension)
@@ -444,8 +441,8 @@ var gap = 63
     // category
                 // colorScale = d3.scale.ordinal().range(["#eeff00", "#ff0022", "#2200ff"]);
 
-                flipcatDimension = ndx.dimension(function (d) { return d.category })
-                flipcatGroup = flipcatDimension.group().reduceSum(function (d) { return d.revenue; });
+                flipcatDimension = ndx.dimension(function (d) { return d.cid })
+                flipcatGroup = flipcatDimension.group().reduceSum(function (d) { return d.imps; });
 
                 flippiecatchart
                     .width(900)
@@ -464,7 +461,7 @@ var gap = 63
     // dimension
 
                 flipdimDimension = ndx.dimension(function (d) { return d.dimension })
-                flipdimGroup = flipdimDimension.group().reduceSum(function (d) { return d.revenue; });
+                flipdimGroup = flipdimDimension.group().reduceSum(function (d) { return d.imps; });
 
                 flippiedimchart
                     .width(500)
@@ -494,102 +491,102 @@ var gap = 63
             };
         }
 // line
-                revvisDimension = ndx.dimension(function (d) { return d.date; });
-                fildatespeGroup = revvisDimension.group().reduceSum(function (d) { return d.date; });
+                // revvisDimension = ndx.dimension(function (d) { return d.date; });
+                // fildatespeGroup = revvisDimension.group().reduceSum(function (d) { return d.date; });
+                // datespeGroup = remove_empty_bins(fildatespeGroup)
+
+                // filrevGroup = revvisDimension.group().reduceSum(function (d) { return d.revenue; });
+                // revGroup = remove_empty_bins(filrevGroup)
+
+                // filvisGroup = revvisDimension.group().reduceSum(function (d) { return d.visits; });
+                // visGroup = remove_empty_bins(filvisGroup)
+
+                // revChart = dc.lineChart(revviscompositeChart)
+                //     .colors('#5474f7')
+                //     .renderDataPoints({ radius: 2.5, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                //     .group(revGroup, 'Revenue')
+                //     .valueAccessor(function (d) {
+                //         return d.value;
+                //     })
+                // visitsChart = dc.lineChart(revviscompositeChart)
+                //     .colors('#f75467')
+                //     .renderDataPoints({ radius: 2.5, fillOpacity: 0.8, strokeOpacity: 0.0 })
+                //     .group(visGroup, 'Visits')
+                //     .useRightYAxis(true)
+                //     .valueAccessor(function (d) {
+                //         return d.value;
+                //     })
+
+                // revviscompositeChart
+                //     .dimension(revvisDimension)
+                //     .group(datespeGroup)
+                //     .transitionDuration(500)
+                //     .shareTitle(false)
+                //     .width(700)
+                //     .height(380)
+                //     .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
+                //     .xUnits(dc.units.ordinal)
+                //     .brushOn(false)
+                //     .yAxisPadding('10%')
+                //     .yAxisLabel("Revenue", 90)
+                //     .rightYAxisLabel("Visits", 25)
+                //     .legend(dc.legend().x(20).y(20).itemHeight(15).gap(5))
+                //     .renderHorizontalGridLines(true)
+                //     .renderVerticalGridLines(true)
+                //     .elasticX(true)
+                //     .elasticY(true)
+                //     ._rangeBandPadding(1)
+                //     .title(function(d) { return formatComma(d.value); })
+                //     .compose([
+                //         revChart,
+                //         visitsChart,
+                //     ])
+                //     .yAxis().ticks(6);
+
+                // revviscompositeChart.margins().left += 30;
+                // revviscompositeChart.margins().right += 15;
+                // revviscompositeChart.margins().top += 20;
+                // revviscompositeChart.margins().bottom += 20;
+                // revviscompositeChart.render();
+
+// // Orders & Avg Cart Value
+
+    // order line
+
+                orderDimension = ndx.dimension(function (d) { return d.daymon; });
+                fildatespeGroup = orderDimension.group().reduceSum(function (d) { return d.daymon; });
                 datespeGroup = remove_empty_bins(fildatespeGroup)
 
-                filrevGroup = revvisDimension.group().reduceSum(function (d) { return d.revenue; });
-                revGroup = remove_empty_bins(filrevGroup)
-
-                filvisGroup = revvisDimension.group().reduceSum(function (d) { return d.visits; });
-                visGroup = remove_empty_bins(filvisGroup)
-
-                revChart = dc.lineChart(revviscompositeChart)
-                    .colors('#5474f7')
-                    .renderDataPoints({ radius: 2.5, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(revGroup, 'Revenue')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-                visitsChart = dc.lineChart(revviscompositeChart)
-                    .colors('#f75467')
-                    .renderDataPoints({ radius: 2.5, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(visGroup, 'Visits')
-                    .useRightYAxis(true)
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                revviscompositeChart
-                    .dimension(revvisDimension)
-                    .group(datespeGroup)
-                    .transitionDuration(500)
-                    .shareTitle(false)
-                    .width(700)
-                    .height(380)
-                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    .yAxisPadding('10%')
-                    .yAxisLabel("Revenue", 90)
-                    .rightYAxisLabel("Visits", 25)
-                    .legend(dc.legend().x(20).y(20).itemHeight(15).gap(5))
-                    .renderHorizontalGridLines(true)
-                    .renderVerticalGridLines(true)
-                    .elasticX(true)
-                    .elasticY(true)
-                    ._rangeBandPadding(1)
-                    .title(function(d) { return formatComma(d.value); })
-                    .compose([
-                        revChart,
-                        visitsChart,
-                    ])
-                    .yAxis().ticks(6);
-
-                revviscompositeChart.margins().left += 30;
-                revviscompositeChart.margins().right += 15;
-                revviscompositeChart.margins().top += 20;
-                revviscompositeChart.margins().bottom += 20;
-                revviscompositeChart.render();
-
-// Orders & Avg Cart Value
-
-    // order bar
-
-                orderDimension = ndx.dimension(function (d) { return d.date; });
-                fildatespeGroup = orderDimension.group().reduceSum(function (d) { return d.date; });
-                datespeGroup = remove_empty_bins(fildatespeGroup)
-
-                filorderGroup = orderDimension.group().reduceSum(function (d) { return d.orders; });
+                filorderGroup = orderDimension.group().reduceSum(function (d) { return d.clicks; });
                 orderGroup = remove_empty_bins(filorderGroup)
 
                 orderChart = dc.lineChart(orderavgcvalubarcompositeChart)
                     .colors('#f7ce54')
                     .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(orderGroup, 'Orders')
+                    .group(orderGroup, 'Clicks')
                     .valueAccessor(function (d) {
                         return d.value;
                     })
 
-    // cart value bar
+    // cart value line
 
-                var avgcartvweekDimension = ndx.dimension(function (d) { return d.date })
+                var avgcartvweekDimension = ndx.dimension(function (d) { return d.daymon })
                 function reduceAdd(p, v) {
                     ++p.count;
-                    p.revenue += v.revenue;
-                    p.orders += v.orders;
+                    p.imps += v.imps;
+                    p.clicks += v.clicks;
                     return p;
                 }
 
                 function reduceRemove(p, v) {
                     --p.count;
-                    p.revenue -= v.revenue;
-                    p.orders -= v.orders;
+                    p.imps -= v.imps;
+                    p.clicks -= v.clicks;
                     return p;
                 }
 
                 function reduceInitial() {
-                    return { count: 0, revenue: 0, orders: 0 };
+                    return { count: 0, imps: 0, clicks: 0 };
                 }
 
                 var avgcartvweekGroup = avgcartvweekDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
@@ -601,8 +598,9 @@ var gap = 63
                     .useRightYAxis(true)
                     .dimension(avgcartvweekDimension)
                     .group(avgcartvweekGroup, 'Cart Vlaue')
-                    .valueAccessor(function (p) { return p.value.orders > 0 ? Math.floor( p.value.revenue / p.value.orders ) : 0  })
-                    .title(function (p) { return formatComma(cartvChart.valueAccessor()(p)) });
+                    .valueAccessor(function (p) { return p.value.clicks > 0 ? p.value.clicks / p.value.imps * 100 : 0  })
+                    // .valueAccessor(function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / p.value.imps * 100).toFixed(2) : 0 })
+                    .title(function (p) { return parseFloat( cartvChart.valueAccessor()(p) ).toFixed(2) });
 
                 orderavgcvalubarcompositeChart
                     .dimension(avgcartvweekDimension)
@@ -611,7 +609,7 @@ var gap = 63
                     .shareTitle(false)
                     .width(700)
                     .height(380)
-                    .x(d3.scaleBand().domain(data.map(function (d) {return d.date; })))
+                    .x(d3.scaleBand().domain(data.map(function (d) {return d.daymon; })))
                     .xUnits(dc.units.ordinal)
                     .brushOn(false)
                     .yAxisPadding('10%')
@@ -634,27 +632,27 @@ var gap = 63
                 orderavgcvalubarcompositeChart.margins().bottom += 20;
                 orderavgcvalubarcompositeChart.render();
 
-                var dimtableDimension = ndx.dimension(function (d) { return d.dimension })
+                var dimtableDimension = ndx.dimension(function (d) { return d.cid })
                 function reduceAdd2(p, v) {
                     ++p.count;
-                    p.revenue += v.revenue;
-                    p.orders += v.orders;
-                    p.visits += v.visits;
+                    p.imps += v.imps;
+                    p.clicks += v.clicks;
+                    // p.visits += v.visits;
 
                     return p;
                 }
 
                 function reduceRemove2(p, v) {
                     --p.count;
-                    p.revenue -= v.revenue;
-                    p.orders -= v.orders;
-                    p.visits -= v.visits;
+                    p.imps -= v.imps;
+                    p.clicks -= v.clicks;
+                    // p.visits -= v.visits;
 
                     return p;
                 }
 
                 function reduceInitial2() {
-                    return { count: 0, revenue: 0, orders: 0, visits: 0 };
+                    return { count: 0, imps: 0, clicks: 0 };
                 }
 
             var dimtableGroup = dimtableDimension.group().reduce(reduceAdd2, reduceRemove2, reduceInitial2);
@@ -666,202 +664,47 @@ var gap = 63
                 .dimension(reversible_group(dimtableGroup))
                 .columns([
                 {
-                    label: 'Dimension',
-                    format: function (d) { return d.key;  }
+                    label: 'cid',
+                    format: function (d) { return d.key }
                 },
                 {
-                    label: 'Revenue',
-                    format: function (p) { return p.value.revenue > 0 ? formatComma( Math.floor( p.value.revenue)) : 0  }
+                    label: 'imps',
+                    format: function (p) { return p.value.imps  }
                 },
                 {
-                    label: 'Visits',
-                    format: function (p) { return p.value.visits > 0 ? formatComma(Math.floor( p.value.visits )) : 0  }
+                    label: 'clicks',
+                    format: function (p) { return p.value.clicks  }
                 },
                 {
-                    label: 'Orders',
-                    format: function (p) { return p.value.orders > 0 ? formatComma(Math.floor( p.value.orders )) : 0  }
+                    label: 'ctr',
+                    format: function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / p.value.imps *100 ).toFixed(2) + "%" : 0  }
                 },
-                {
-                    label: 'Cart Value',
-                    format: function (p) { return p.value.orders > 0 ? Math.floor( p.value.revenue / p.value.orders ) : 0  }
-                },
-                {
-                    label: 'Conversion',
-                    format: function (p) { return p.value.visits > 0 ? parseFloat( p.value.orders / p.value.visits * 100 ).toFixed(2) + "%" : 0 }
-                },
-                {
-                    label: 'RPV',
-                    format: function (p) { return p.value.visits > 0 ? Math.floor( p.value.revenue / p.value.visits) : 0 }
-                }
                     ])
                 // .sortBy(function (d) { return d.value.avg })
                 .order(d3.descending)
             dimtable.render();
 
-            BUdateDimension = ndx.dimension(function (d) { return d.date; });
-
-                totalForType = function (type) {
-                    return function (d) {
-                        return d.category === type ? d.revenue : null;
-                    };
-                };
-                
-                fildatespeGroup = BUdateDimension.group().reduceSum(function (d) { return d.date; });
-                datespeGroup = remove_empty_bins(fildatespeGroup)
-
-                filbuEAGroup = BUdateDimension.group().reduceSum(totalForType('ElectronicsAccessories'))
-                buEAGroup = remove_empty_bins(filbuEAGroup)
-
-                filbuEDGroup = BUdateDimension.group().reduceSum(totalForType('ElectronicsDevices'))
-                buEDGroup = remove_empty_bins(filbuEDGroup)
-
-                filbuFGroup = BUdateDimension.group().reduceSum(totalForType('Furniture'))
-                buFGroup = remove_empty_bins(filbuFGroup);
-
-                filbuHGroup = BUdateDimension.group().reduceSum(totalForType('Home'))
-                buHGroup = remove_empty_bins(filbuHGroup);
-
-                filbuLGroup = BUdateDimension.group().reduceSum(totalForType('Large'))
-                buLGroup = remove_empty_bins(filbuLGroup);
-
-                filbuLsGroup = BUdateDimension.group().reduceSum(totalForType('Lifestyle'))
-                buLsGroup = remove_empty_bins(filbuLsGroup);
-
-                filbuMGroup = BUdateDimension.group().reduceSum(totalForType('Mobile'))
-                buMGroup = remove_empty_bins(filbuMGroup);
-
-                filbuBGMGroup = BUdateDimension.group().reduceSum(totalForType('BGM'))
-                buBGMGroup = remove_empty_bins(filbuBGMGroup);
-
-                buEAChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[0])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buEAGroup, 'E Access')
-                    .useRightYAxis(true)
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buEDChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[1])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buEDGroup, 'E Devive')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buFChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[2])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buFGroup, 'Furniture')
-                    .useRightYAxis(true)
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buHChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[3])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buHGroup, 'Home')
-                    .useRightYAxis(true)
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buLChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[4])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buLGroup, 'Large')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buLsChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[5])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buLsGroup, 'Lifestyle')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buMChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[6])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buMGroup, 'Mobile')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                buBGMChart = dc.lineChart(BUcompositeChart)
-                    .colors(colors[7])
-                    .renderDataPoints({ radius: 3, fillOpacity: 0.8, strokeOpacity: 0.0 })
-                    .group(buBGMGroup, 'BGM')
-                    .valueAccessor(function (d) {
-                        return d.value;
-                    })
-
-                BUcompositeChart
-                    .dimension(BUdateDimension)
-                    .group(datespeGroup)
-                    .width(1250)
-                    .height(400)
-                    .x(d3.scaleBand().domain(data.map(function (d) { return d.date; })))
-                    .xUnits(dc.units.ordinal)
-                    .brushOn(false)
-                    .yAxisLabel("Revenue", 120)
-                    .rightYAxisLabel("Revenue", 25)
-                    .yAxisPadding(4000)
-                    .legend(dc.legend().x(20).y(20).itemHeight(15).gap(5))
-                    .renderHorizontalGridLines(true)
-                    .renderVerticalGridLines(true)
-                    .elasticX(true)
-                    .elasticY(true)
-                    ._rangeBandPadding(1)
-                    .title(function (d) { return dayFormat(d.key) + ': ' + formatComma(d.value); })
-                    // .colors(d3.scaleOrdinal().range(d3.schemeSet3))
-                    // .yAxis().ticks(5)
-                    .compose([
-                        buEAChart,
-                        buEDChart,
-                        buFChart,
-                        buHChart,
-                        buLChart,
-                        buLsChart,
-                        buMChart,
-                        buBGMChart
-                    ])
-                    .yAxis().ticks(5);
-
-                BUcompositeChart.margins().left += 25;
-                BUcompositeChart.margins().right += 15;
-                BUcompositeChart.margins().top += 20;
-                BUcompositeChart.margins().bottom += 20;
-
-                BUcompositeChart.render();
-
-    //table
-
-            var butableDimension = ndx.dimension(function (d) { return d.category })
+            var butableDimension = ndx.dimension(function (d) { return d.dimension })
                 function reduceAdd3(p, v) {
                     ++p.count;
-                    p.revenue += v.revenue;
-                    p.orders += v.orders;
-                    p.visits += v.visits;
+                    p.imps += v.imps;
+                    p.clicks += v.clicks;
+                    // p.visits += v.visits;
 
                     return p;
                 }
 
                 function reduceRemove3(p, v) {
                     --p.count;
-                    p.revenue -= v.revenue;
-                    p.orders -= v.orders;
-                    p.visits -= v.visits;
+                    p.imps -= v.imps;
+                    p.clicks -= v.clicks;
+                    // p.visits -= v.visits;
 
                     return p;
                 }
 
                 function reduceInitial3() {
-                    return { count: 0, revenue: 0, orders: 0, visits: 0 };
+                    return { count: 0, imps: 0, clicks: 0 };
                 }
 
             var butableGroup = butableDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
@@ -873,33 +716,21 @@ var gap = 63
                 .dimension(reversible_group(butableGroup))
                 .columns([
                 {
-                    label: 'BU',
-                    format: function (d) { return  console.log(d.key); d.key }
+                    label: 'dimension',
+                    format: function (d) { return d.key }
                 },
                 {
-                    label: 'Revenue',
-                    format: function (p) { return p.value.revenue > 0 ? formatComma( Math.floor( p.value.revenue)) : 0  }
+                    label: 'imps',
+                    format: function (p) { return p.value.imps  }
                 },
                 {
-                    label: 'Visits',
-                    format: function (p) { return p.value.visits > 0 ? formatComma(Math.floor( p.value.visits )) : 0  }
+                    label: 'clicks',
+                    format: function (p) { return p.value.clicks  }
                 },
                 {
-                    label: 'Orders',
-                    format: function (p) { return p.value.orders > 0 ? formatComma(Math.floor( p.value.orders )) : 0  }
+                    label: 'ctr',
+                    format: function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / p.value.imps *100 ).toFixed(2) + "%" : 0  }
                 },
-                {
-                    label: 'Cart Value',
-                    format: function (p) { return p.value.orders > 0 ? Math.floor( p.value.revenue / p.value.orders ) : 0  }
-                },
-                {
-                    label: 'Conversion',
-                    format: function (p) { return p.value.visits > 0 ? parseFloat( p.value.orders / p.value.visits * 100 ).toFixed(2) + "%" : 0 }
-                },
-                {
-                    label: 'RPV',
-                    format: function (p) { return p.value.visits > 0 ? Math.floor( p.value.revenue / p.value.visits) : 0 }
-                }
                     ])
                 // .sortBy(function (d) { return d.key })
                 .order(d3.descending)
@@ -916,11 +747,24 @@ var gap = 63
                 };
             }
 
-            // d3.selectAll('#select-direction input')
-            //     .on('click', function () {
-            //         // this.value is 'ascending' or 'descending'
-            //         chart.order(d3[this.value]).redraw()
-            //     });
+//             var totalGroup = all.reduceSum(reduceAdd2, reduceRemove2, reduceInitial2);
+
+            // dimtotaltable
+            //     .width(768)
+            //     .height(480)
+            //     .showSections(false)
+            //     .dimension(totalGroup)
+            //     .columns([
+            //          function (p) { return p.value.revenue > 0 ? formatComma( Math.floor( p.value.revenue)) : 0  },
+            //          function (p) { return p.value.visits > 0 ? formatComma(Math.floor( p.value.visits )) : 0  },
+            //          function (p) { return p.value.orders > 0 ? formatComma(Math.floor( p.value.orders )) : 0  },
+            //          function (p) { return p.value.orders > 0 ? Math.floor( p.value.revenue / p.value.orders ) : 0  },
+            //          function (p) { return p.value.visits > 0 ? parseFloat( p.value.orders / p.value.visits * 100 ).toFixed(2) + "%" : 0 },
+            //          function (p) { return p.value.visits > 0 ? Math.floor( p.value.revenue / p.value.visits) : 0 }
+            //         ])
+            //     .order(d3.descending)
+            // dimtotaltable.render();
+
         }
         }
         )();
