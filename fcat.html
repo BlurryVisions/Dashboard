@@ -219,18 +219,11 @@
         <a class="navig" href="https://ad.hockeycurve.com/ad.php?zoneid=special&client=flipkart&fcat=bucateg&staging=only"><b>Category</b>&nbsp;Dashboard</a>
     </div>
     
-    <div class="select">
-        <div class="title">
-            <div>Dimension&nbsp;</div>
-            <div id="selectdim"></div>
-        </div>
-    </div>
-    
     <div class="line">
     <div class="double">
         <div class="card">
-            <div class="cardhead"><b>CTR</b></div>
-            <div class="cardcont" id="orderavgcvalubarcompositeChart"></div>
+            <div class="cardhead"><b>BU</b></div>
+            <div class="table" id="butable"></div>
         </div>
     </div>
     </div>
@@ -241,15 +234,13 @@
             <div id="selectdate"></div>
         </div>
         <div class="title">
-            <div>CID&nbsp;</div>
-            <div id="selectcid"></div>
+            <div>BU&nbsp;</div>
+            <div id="selectdim"></div>
         </div>
     </div>
 
     <div class="line">
         <div class="double">
-
-            <div class="table" id="butable"></div>
 
             <div class="table" id="dimtable"></div>
             
@@ -264,7 +255,7 @@
             google.setOnLoadCallback(init);
 
             function init() {
-                var query = new google.visualization.Query("https://docs.google.com/spreadsheet/ccc?key=1he1nQOzCubxP90LH6DsB7yZxj08A6-4y9XZsV5QgC9s");
+                var query = new google.visualization.Query("https://docs.google.com/spreadsheet/ccc?key=1Bmh1bEkjKM_f54ElGF5dkoVIw7OR5tkK2Hvc0vjHyOw");
                 query.send(handleQueryResponse);
             }
 
@@ -317,9 +308,12 @@
                     // console.log(d.fulldate);
                     // column name
                     d.dimension = d[1];
-                    d.cid = parseInt(d[2]);
-                    d.imps = parseInt(d[3]);
-                    d.clicks = parseInt(d[4]);
+                    d.category = d[2];
+                    d.revenue = parseInt(d[3]);
+                    d.visits = parseInt(d[4]);
+                    d.orders = parseInt(d[5]);
+                    d.imps = parseInt(d[6]);
+                    d.clicks = parseInt(d[7]);
 
                     // pre-calculate better performance
                     // d.fulldate = timeFormat(d.fulldate)
@@ -357,7 +351,7 @@
 // select
 
 // cid
-                cidDimension = ndx.dimension(function (d) { return d.cid })
+                cidDimension = ndx.dimension(function (d) { return d.category })
 
                 selectCid
                     .dimension(cidDimension)
@@ -398,7 +392,7 @@ var gap = 63
     // category
                 // colorScale = d3.scale.ordinal().range(["#eeff00", "#ff0022", "#2200ff"]);
 
-                flipcatDimension = ndx.dimension(function (d) { return d.cid })
+                flipcatDimension = ndx.dimension(function (d) { return d.category })
                 flipcatGroup = flipcatDimension.group().reduceSum(function (d) { return d.imps; });
 
                 flippiecatchart
@@ -532,12 +526,15 @@ var gap = 63
                 orderavgcvalubarcompositeChart.margins().bottom += 20;
                 orderavgcvalubarcompositeChart.render();
 
-                var dimtableDimension = ndx.dimension(function (d) { return d.cid })
+                var dimtableDimension = ndx.dimension(function (d) { return d.category })
 
                 function reduceAdd2(p, v) {
                     ++p.count;
                     p.imps += v.imps;
                     p.clicks += v.clicks;
+                    p.visits += v.visits;
+                    p.revenue += v.revenue;
+                    p.orders += v.orders;
 
                     return p;
                 }
@@ -546,12 +543,15 @@ var gap = 63
                     --p.count;
                     p.imps -= v.imps;
                     p.clicks -= v.clicks;
+                    p.visits -= v.visits;
+                    p.revenue -= v.revenue;
+                    p.orders -= v.orders;
 
                     return p;
                 }
 
                 function reduceInitial2() {
-                    return { count: 0, imps: 0, clicks: 0 };
+                    return { count: 0, imps: 0, clicks: 0, revenue: 0, visits: 0, orders: 0 };
                 }
 
             var dimtableGroup = dimtableDimension.group().reduce(reduceAdd2, reduceRemove2, reduceInitial2);
@@ -564,7 +564,7 @@ var gap = 63
                 .size(Infinity)
                 .columns([
                 {
-                    label: 'CID',
+                    label: 'FCAT',
                     format: function (d) { return d.key }
                 },
                 // {
@@ -576,13 +576,29 @@ var gap = 63
                     format: function (p) { return formatComma(p.value.imps)}
                 },
                 {
-                    label: 'Clicks',
-                    format: function (p) { return formatComma(p.value.clicks)}
+                    label: 'Rev',
+                    format: function (p) { return formatComma(p.value.revenue)}
                 },
                 {
                     label: 'CTR',
                     format: function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / ( p.value.imps / 2 ) *100 ).toFixed(2) + "%" : 0  }
-                }
+                },
+                {
+                    label: 'Vis/Cli',
+                    format: function (p) { return p.value.clicks > 0 ? parseFloat(p.value.visits / p.value.clicks *100 ).toFixed(0) + "%" : 0  }
+                },
+                {
+                    label: 'Conversion',
+                    format: function (p) { return p.value.visits > 0 ? parseFloat(p.value.orders / p.value.visits *100 ).toFixed(2) + "%" : 0  }
+                },
+                {
+                    label: 'RPV',
+                    format: function (p) { return p.value.visits > 0 ? parseInt(p.value.revenue / p.value.visits ) : 0  }
+                },
+                {
+                    label: 'Cart Value',
+                    format: function (p) { return p.value.visits > 0 ? parseInt(p.value.revenue / p.value.orders ) : 0  }
+                },
                     ])
                 .sortBy(function (d) { return d.value.imps })
                 .order(d3.descending);
@@ -599,6 +615,9 @@ var gap = 63
                     ++p.count;
                     p.imps += v.imps;
                     p.clicks += v.clicks;
+                    p.visits += v.visits;
+                    p.revenue += v.revenue;
+                    p.orders += v.orders;
 
                     return p;
                 }
@@ -607,12 +626,15 @@ var gap = 63
                     --p.count;
                     p.imps -= v.imps;
                     p.clicks -= v.clicks;
+                    p.visits -= v.visits;
+                    p.revenue -= v.revenue;
+                    p.orders -= v.orders;
 
                     return p;
                 }
 
                 function reduceInitial3() {
-                    return { count: 0, imps: 0, clicks: 0};
+                    return { count: 0, imps: 0, clicks: 0, revenue: 0, visits: 0, orders: 0 };
                 }
 
             var butableGroup = butableDimension.group().reduce(reduceAdd3, reduceRemove3, reduceInitial3);
@@ -625,7 +647,7 @@ var gap = 63
                 .size(Infinity)
                 .columns([
                 {
-                    label: 'Dimension',
+                    label: 'BU',
                     format: function (d) { return d.key }
                 },
                 {
@@ -633,13 +655,29 @@ var gap = 63
                     format: function (p) { return formatComma(p.value.imps)}
                 },
                 {
-                    label: 'Clicks',
-                    format: function (p) { return formatComma(p.value.clicks)}
+                    label: 'Rev',
+                    format: function (p) { return formatComma(p.value.revenue)}
                 },
                 {
                     label: 'CTR',
                     format: function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / ( p.value.imps / 2 ) *100 ).toFixed(2) + "%" : 0  }
-                }
+                },
+                {
+                    label: 'Vis/Cli',
+                    format: function (p) { return p.value.visits > 0 ? parseFloat(p.value.visits / p.value.clicks *100 ).toFixed(0) + "%" : 0  }
+                },
+                {
+                    label: 'Conversion',
+                    format: function (p) { return p.value.visits > 0 ? parseFloat(p.value.orders / p.value.visits *100 ).toFixed(2) + "%" : 0  }
+                },
+                {
+                    label: 'RPV',
+                    format: function (p) { return p.value.visits > 0 ? parseInt(p.value.revenue / p.value.visits ) : 0  }
+                },
+                {
+                    label: 'Cart Value',
+                    format: function (p) { return p.value.visits > 0 ? parseInt(p.value.revenue / p.value.orders ) : 0  }
+                },
                     ])
                 // .sortBy(function (d) { return d.revenue })
                 .order(d3.descending);

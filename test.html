@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- <meta content="utf-8" http-equiv="encoding"> -->
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.7/crossfilter.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/3.1.5/dc.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/3.1.5/dc.css">
+
+    <title></title>
+</head>
+<style>
+    body {
+        min-width: 1400px;
+    }
+
+    a {
+        color: #ffffff;
+    }
+
+    line.tracking,
+    text.texttip {
+        stroke-opacity: 0;
+        fill-opacity: 0;
+        fill: gray;
+        font-size: 11px;
+        stroke: gray;
+        stroke-dasharray: 2 5;
+        transition: 0.25s all;
+    }
+
+    svg:hover line.tracking {
+        stroke-opacity: 1;
+        stroke-width: 1px;
+    }
+
+    svg:hover text.texttip {
+        fill-opacity: 1;
+    }
+
+    .y-label,
+    .yr-label {
+        font-weight: bolder;
+    }
+
+    .dc-chart .pie-slice,
+    .dc-legend {
+        font-size: 16px;
+    }
+
+    .contain {
+        display: flex;
+        width: 100%;
+    }
+
+    .select {
+        display: flex;
+        width: 50%;
+    }
+
+    .select,
+    .linepie {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: flex-end;
+        justify-content: space-around;
+        width: 100%;
+        /* max-width: 1600px; */
+        padding: 1% 0;
+        /* border-top: 1px dotted black; */
+        border-bottom: 2px dotted black;
+    }
+
+    .datatab {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .title,
+    .linecharts>div,
+    .pierpv {
+        display: flex;
+        justify-content: center;
+        flex-flow: row wrap;
+        /* width: 100%; */
+    }
+
+    .nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 43px;
+        background-color: #80add7;
+    }
+
+    .navig {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        border-bottom: 1px solid #80add7;
+        height: 36px;
+        padding: 0% 1%;
+    }
+
+    .navig:hover {
+        text-decoration: none;
+        border-bottom: 1px solid #ffffff;
+    }
+
+    .link {
+        width: 100px;
+        height: 40px;
+        border: 1px solid #ffffff;
+        background-color: #0abda0;
+        color: #FCF6F5FF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .title>div,
+    .datatab>div {
+        padding: 4% 0%;
+    }
+
+    .barcharts>div {
+        display: flex;
+        flex-flow: column wrap;
+        /* width: 48%; */
+        min-height: 410px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .section {
+        padding: 0.5%;
+    }
+
+    .section:nth-of-type(1) {
+        border-right: 2px dotted #000;
+    }
+
+    /* .barcharts > div {
+        display: flex;
+        flex-flow: column wrap;
+        width: 32%;
+        min-height: 410px;
+        justify-content: flex-end;
+    } */
+    .title {
+        color: blueviolet;
+    }
+
+    .reset {
+        display: flex;
+        justify-content: center;
+        /* width: 50%; */
+        padding-bottom: 1%;
+    }
+
+    .navbar {
+        overflow: hidden;
+        background-color: transparent;
+        position: fixed;
+        padding: 1px;
+        top: 0;
+        right: 0;
+        width: 100px;
+    }
+
+    .colors {
+        display: flex;
+        height: 40px;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .header {
+        font-size: 20px;
+        padding: 10px;
+        ;
+    }
+
+    .table {
+        width: auto;
+    }
+
+    .table thead th {
+        vertical-align: middle;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        line-height: 20px;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #ddd;
+    }
+
+    .dc-table-label {
+        color: blueviolet;
+    }
+
+    #number-box {
+        background: orange;
+        width: 200px;
+        font-size: 64px;
+        text-align: center;
+        padding-top: 63px;
+        padding-bottom: 63px;
+        height: 74px;
+        line-height: normal;
+    }
+</style>
+
+<body>
+
+    <div class="col-md-3 well well-sm navbar">
+        <div id="data-count">
+            <div class="link"><a href="javascript:dc.filterAll(); dc.redrawAll();">Reset All</a></div>
+        </div>
+    </div>
+
+    <div class="contain">
+        <div class="section">
+            <div class="select">
+                <div class="title">
+                    <div>Select dimension :</div>
+                    <div id="selectyear"></div>
+                </div>
+                <div class="title">
+                    <div>Select cid :</div>
+                    <div id="selectmonth"></div>
+                </div>
+                <div class="title">
+                    <div>Select date :</div>
+                    <div id="selectdate"></div>
+                </div>
+            </div>
+            <div class="daily">
+                <div class="double">
+                    <!-- <div class="header">Day-wise Trends</div> -->
+                    <!-- <div id="numberbox"></div> -->
+
+                    <!-- <div class="card">
+                    <div class="cardhead"><b>Impressions</b>&nbsp;</div>
+                    <div class="cardcont" id="implinechart"></div>
+                </div> -->
+                    <div class="card">
+                        <div class="cardhead"><b>CTR</b>&nbsp;</div>
+                        <div class="cardcont table" id="numberbox"></div>
+                    </div>
+                </div>
+
+                <!-- <div class="double">
+                <div class="card">
+                    <div class="cardhead"><b>Visits</b>&nbsp;</div>
+                    <div class="cardcont" id="visitlinechart"></div>
+                </div>
+                <div class="card">
+                    <div class="cardhead"><b>Spends</b>&nbsp;</div>
+                    <div class="cardcont" id="spendlinechart"></div>
+                </div>
+            </div> -->
+            </div>
+        </div>
+        <!-- <div class="section">
+            <div class="select">
+                <div class="title">
+                    <div>Select dimension :</div>
+                    <div id="selectyear2"></div>
+                </div>
+                <div class="title">
+                    <div>Select cid :</div>
+                    <div id="selectmonth2"></div>
+                </div>
+                <div class="title">
+                    <div>Select date :</div>
+                    <div id="selectdate2"></div>
+                </div>
+            </div>
+            <div class="daily">
+                <div class="double">
+                    <div class="header">Day-wise Trends</div>
+
+                    <!-- <div class="card">
+                    <div class="cardhead"><b>Impressions</b>&nbsp;</div>
+                    <div class="cardcont" id="implinechart"></div>
+                </div> 
+                    <div class="card">
+                        <div class="cardhead"><b>Revenue</b>&nbsp;</div>
+                        <div class="cardcont table" id="dimtable2"></div>
+                    </div>
+                </div>
+
+                <!-- <div class="double">
+                <div class="card">
+                    <div class="cardhead"><b>Visits</b>&nbsp;</div>
+                    <div class="cardcont" id="visitlinechart"></div>
+                </div>
+                <div class="card">
+                    <div class="cardhead"><b>Spends</b>&nbsp;</div>
+                    <div class="cardcont" id="spendlinechart"></div>
+                </div>
+            </div> 
+            </div>
+        </div> -->
+    </div>
+    <script>
+        !(function () {
+
+            google.load("visualization", "0");
+            google.setOnLoadCallback(init);
+
+            function init() {
+                var query = new google.visualization.Query("https://docs.google.com/spreadsheet/ccc?key=1oTi3lc1bjXHPxun5Anj1mdCIFHOhhONdv1H44FwtiC8");
+                query.send(handleQueryResponse);
+            }
+
+            function handleQueryResponse(response) {
+                var data = response.getDataTable();
+                var DataArray = new Array(data.getNumberOfRows());
+
+                for (var row = 0; row < data.getNumberOfRows(); row++) {
+                    DataArray[row] = new Array(data.getNumberOfColumns());
+                    for (var col = 0, n = data.getNumberOfColumns(); col < n; col++) {
+                        // DataArray[row][col] = data.getFormattedValue(row, col);
+
+                        // if (col > 3) {
+                        //     DataArray[row][col] = Math.floor(data.getFormattedValue(row, col));
+                        // } else {
+                        DataArray[row][col] = data.getFormattedValue(row, col);
+                        // }
+                    }
+                }
+                rendering(DataArray);
+                renderings(DataArray);
+                // console.log(DataArray)
+            }
+
+            function rendering(data) {
+
+                // declaration
+
+                colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabebe', '#469990', '#e6beff', '#808000', '#ffd8b1', '#000075']
+
+                var formatComma = d3.format(",");
+
+                var dateFormatSpecifier = '%Y-%m-%d';
+                var daymonthFormatSpecifier = '%d %b';
+                var monthFormatSpecifier = '%B';
+                var monthyearFormatSpecifier = '%B, %Y';
+                var yearFormatSpecifier = '%Y';
+                var dayFormatSpecifier = '%_d';
+                var weekFormatSpecifier = '%a';
+
+                var timeFormat = d3.timeFormat(dateFormatSpecifier);
+                var monthFormat = d3.timeFormat(monthFormatSpecifier);
+                var yearFormat = d3.timeFormat(yearFormatSpecifier);
+                var dayFormat = d3.timeFormat(dayFormatSpecifier);
+                var daymonthFormat = d3.timeFormat(daymonthFormatSpecifier);
+                var monthyearFormat = d3.timeFormat(monthyearFormatSpecifier);
+                var weekFormat = d3.timeFormat(weekFormatSpecifier);
+
+                var dateFormatParser = d3.timeParse(dateFormatSpecifier);
+
+                data.forEach(function (d) {
+                    // date				
+                    d.fulldate = dateFormatParser(d[0]);
+                    // column name
+                    // d.impressions = parseInt(d[1]);
+                    // d.clicks = parseInt(d[2]);
+                    // d.ctr = parseFloat(d[3]);
+                    // d.cpc = parseFloat(d[4]);
+                    // d.spends = parseInt(d[5]);
+                    // d.cpm = parseFloat(d[6])
+                    // d.visits = parseInt(d[7]);
+                    // d.revenue = parseInt(d[8]);
+                    // d.units = parseInt(d[9]);
+                    // d.orders = parseInt(d[10]);
+                    d.cid = parseInt(d[1])
+                    // d.revenuevisit = d[12]
+                    // d.cpv = parseFloat(d[2]);
+                    d.dimension = d[2]
+                    d.imps = parseInt(d[3])
+                    d.clicks = parseFloat(d[4])
+                    // d.cartValue = parseInt(d[17])
+
+                    // pre-calculate better performance
+                    d.month = monthFormat(d3.timeMonth(d.fulldate));
+                    d.daymon = daymonthFormat(d3.timeDay(d.fulldate));
+                    // console.log(d.daymon)
+                    d.year = yearFormat(d3.timeMonth(d.fulldate));
+                    d.date = parseInt(dayFormat(d3.timeDay(d.fulldate)));
+                    d.week = weekFormat(d3.timeDay(d.fulldate));
+                });
+
+                selectYear = dc.selectMenu('#selectyear');
+                selectMonth = dc.selectMenu('#selectmonth');
+                selectdate = dc.selectMenu('#selectdate');
+                boxND = dc.numberDisplay("#numberbox");
+
+
+                dimtable = dc.dataTable('#dimtable');
+                
+
+
+// d.fulldate = dateFormatParser(d[0]);
+
+// var parseTime = d3.time.format("%Y.%m.%d").parse;
+
+
+
+                var ndx = crossfilter(data)
+                // var ndxx = crossfilter(data)
+                var all = ndx.groupAll();
+
+                // mindate = d3.min(data, function(d){ return d.fulldate })
+                // maxdate = d3.max(data, function(d){ return d.fulldate })
+
+                var max = d3.max(data, function (d) { return (d.fulldate) })
+                var min = d3.min(data, function (d) { return (d.fulldate) })
+
+                console.log("Max is: " + max)
+                console.log("Min is: " + min)
+
+                // select
+                // year
+                yearDimension = ndx.dimension(function (d) { return d.dimension })
+
+                selectYear
+                    .dimension(yearDimension)
+                    .group(yearDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectYear.render();
+
+                datessDimension = ndx.dimension(function (d) { return daymonthFormat(d.fulldate) })
+
+                selectdate
+                    .dimension(datessDimension)
+                    .group(datessDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectdate.render();
+
+                // // month
+                monthDimension = ndx.dimension(function (d) { return d.cid })
+
+                selectMonth
+                    .dimension(monthDimension)
+                    .group(monthDimension.group())
+                    .controlsUseVisibility(true);
+
+                selectMonth.render();
+
+
+                function reversible_group(group) {
+                    return {
+                        top: function (N) {
+                            return group.top(N);
+                        },
+                        bottom: function (N) {
+                            return group.top(Infinity).slice(-N).reverse();
+                        }
+                    };
+                }
+
+                runDimension = ndx.dimension(function (d) { return d3.max(d.date) })
+                    meanSpeedGroup = ndx.groupAll().reduce(
+                        function (p, v) {
+                            ++p.count;
+                            p.imps += v.imps;
+                            p.clicks += v.clicks;
+
+                            return p;
+                        },
+                        function (p, v) {
+                            --p.count;
+                            p.imps -= v.imps;
+                            p.clicks -= v.clicks;
+
+                            return p;
+                        },
+                        function () { return { imps: 0, clicks: 0 }; }
+                    );
+                    var ctr = function (d) {
+                        return d.clicks ? d.clicks / d.imps : 0;
+                    };
+                    var key = function (d) {
+                        return d.key;
+                    };
+
+console.log(ctr)
+                    boxND
+                        .formatNumber(d3.format(",.2%"))
+                        // .dimension(reversible_group(runDimension))
+                        .group(meanSpeedGroup)
+                        // .domain(getDate())
+                        .valueAccessor(ctr);
+                        // .valueAccessor(function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / p.value.imps * 100).toFixed(2) : 0 })
+                    boxND.render();
+
+                    boxND
+                        .formatNumber(d3.format(",.2%"))
+                        // .dimension(reversible_group(runDimension))
+                        // .range(max)
+                        .group(meanSpeedGroup)
+                        .valueAccessor(ctr);
+                        // .valueAccessor(function (p) { return p.value.clicks > 0 ? parseFloat(p.value.clicks / p.value.imps * 100).toFixed(2) : 0 })
+                    boxND.render();
+
+
+                function remove_empty_bins(source_group) {
+                    return {
+                        all: function () {
+                            return source_group.all().filter(function (d) {
+                                return d.value !== 0;
+                            });
+                        }
+                    };
+                }
+
+                revdateDimension = ndx.dimension(function (d) { return d.date; });
+
+                totalForType = function (type) {
+                    return function (d) {
+                        return d.month === type ? d.revenue : null;
+                    };
+                };
+
+
+
+
+
+            }
+
+
+        })();
+    </script>
+
+</body>
+
+</html>
