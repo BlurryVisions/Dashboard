@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="firsttitle"></div>
+</body>
+</html>
+<script>
+
+  const url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=d5bba5aad8734cfd8c309a5833aa8031';
+  fetch(url)
+  .then((resp) => resp.json())
+  .then(function(data) {
+
+
+    let articles = data.articles;
+
+    document.getElementById("firsttitle").innerHTML = articles[0].title;
+
+
+  })
+
+</script>
+
+<!-- <script>
+     fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=d5bba5aad8734cfd8c309a5833aa8031')
+   .then(function(response) {
+       return response.json();
+     })
+     .then(function(myJson) {
+    headline = myJson.articles[0].title;
+                    console.log(headline)
+
+        document.getElementById("text1").innerHTML =   headline;
+     }
+     )
+</script> -->
